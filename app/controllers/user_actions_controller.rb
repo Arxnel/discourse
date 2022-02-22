@@ -2,8 +2,7 @@
 
 class UserActionsController < ApplicationController
   def index
-    params.require(:username)
-    params.permit(:filter, :offset, :acting_username, :limit)
+    params.transform_values!(&:to_s).require(:username)
 
     user = fetch_user_from_params(include_inactive: current_user.try(:staff?) || (current_user && SiteSetting.show_inactive_accounts))
     offset = [0, params[:offset].to_i].max
@@ -20,7 +19,7 @@ class UserActionsController < ApplicationController
       limit: limit,
       action_types: action_types,
       guardian: guardian,
-      ignore_private_messages: params[:filter] ? false : true,
+      ignore_private_messages: params[:filter].blank?,
       acting_username: params[:acting_username]
     }
 
