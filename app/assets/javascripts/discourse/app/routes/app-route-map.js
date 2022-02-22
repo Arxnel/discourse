@@ -8,6 +8,7 @@ export default function () {
   this.route("about", { path: "/about", resetNamespace: true });
 
   this.route("post", { path: "/p/:id" });
+  this.route("widget-vs-glimmer", { path: "/widget-vs-glimmer" });
 
   // Topic routes
   this.route(

@@ -16,6 +16,7 @@ Discourse::Application.routes.draw do
     match "/404", to: "exceptions#not_found", via: [:get, :post]
     get "/404-body" => "exceptions#not_found_body"
 
+    get "/widget-vs-glimmer" => "application#render_empty"
     get "/bootstrap" => "bootstrap#index"
 
     post "webhooks/aws" => "webhooks#aws"

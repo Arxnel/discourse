@@ -6,6 +6,8 @@ import { ajax } from "discourse/lib/ajax";
 import { createWidget, createWidgetFrom } from "discourse/widgets/widget";
 import { h } from "virtual-dom";
 import I18n from "I18n";
+import NOTIFICATIONS_JSON from "discourse/lib/notifications-json";
+import EmberObject from "@ember/object";
 
 const ICON = "bell";
 
@@ -61,7 +63,10 @@ createWidgetFrom(QuickAccessPanel, "quick-access-notifications", {
   },
 
   findNewItems() {
-    return this._findStaleItemsInStore().refresh();
+    return Promise.resolve(
+      NOTIFICATIONS_JSON.notifications.map((no) => EmberObject.create(no))
+    );
+    // return this._findStaleItemsInStore().refresh();
   },
 
   showAllHref() {

@@ -15,6 +15,10 @@ class ApplicationController < ActionController::Base
 
   serialization_scope :guardian
 
+  def render_empty
+    raise ApplicationController::RenderEmpty
+  end
+
   protect_from_forgery
 
   # Default Rails 3.2 lets the request through with a blank session
