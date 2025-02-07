@@ -3,6 +3,7 @@
 @import "./common/foundation/base";
 @import "./color_definitions";
 @import "./common/components/buttons";
+@import "./common/components/hashtag";
 
 article.post {
   border-bottom: 1px solid var(--primary-low);
@@ -18,6 +19,7 @@ article.post {
   .quote .title {
     border-left: 5px solid var(--primary-very-low);
     padding: 10px 10px 0 12px;
+
     .avatar {
       margin-right: 7px;
     }
@@ -32,9 +34,11 @@ article.post {
     padding: 10px 8px 10px 13px;
     margin: 0 0 10px 0;
     border-left: 5px solid var(--primary-very-low);
+
     p {
       margin: 0 0 10px 0;
     }
+
     p:last-of-type {
       margin-bottom: 0;
     }
@@ -43,7 +47,7 @@ article.post {
   .post-date {
     float: right;
     color: var(--primary-low-mid);
-    font-size: $font-down-1;
+    font-size: var(--font-down-1);
     margin: 10px 4px 0 0;
   }
 
@@ -66,25 +70,37 @@ article.post {
     pre {
       white-space: pre-wrap;
     }
+
     img {
       max-width: 100%;
       height: auto;
     }
+
     p {
       margin: 0 0 1em 0;
+    }
+
+    .hashtag-cooked {
+      padding: 0.2em 0.5em;
+
+      .hashtag-icon-placeholder {
+        font-weight: bold;
+        margin-right: 0;
+      }
     }
   }
 }
 
 .username {
-  font-size: $font-down-1;
+  font-size: var(--font-down-1);
   margin: 0 0 10px 0;
 
   a {
     color: var(--primary-high);
   }
+
   a.staff {
-    background-color: var(--highlight-low);
+    background-color: var(--highlight-bg);
   }
 
   a.new-user {
@@ -103,16 +119,15 @@ img.emoji {
 }
 
 .in-reply-to {
-  font-size: $font-down-1;
+  font-size: var(--font-down-1);
   text-align: center;
   margin: 10px 20px 6px 0;
-  display: inline-block;
   float: right;
   color: var(--tertiary);
 }
 
 .replies {
-  font-size: $font-0;
+  font-size: var(--font-0);
   color: var(--primary-medium);
 }
 
@@ -124,9 +139,8 @@ header.discourse {
   padding-left: 10px;
   padding-right: 10px;
   padding-bottom: 8px;
-  font-size: $font-up-2;
+  font-size: var(--font-up-2);
   border-bottom: 3px solid var(--primary-low);
-
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -134,7 +148,7 @@ header.discourse {
 
   h3 {
     margin: 0 auto 0 0;
-    font-size: $font-0;
+    font-size: var(--font-0);
   }
 }
 
@@ -143,8 +157,9 @@ header.discourse {
 }
 
 footer {
-  font-size: $font-up-2;
+  font-size: var(--font-up-2);
   margin-top: 0.5em;
+
   .button {
     color: white;
     padding: 6px 8px;
@@ -165,6 +180,7 @@ footer {
 // which we will now clean up
 aside.onebox {
   margin-bottom: 20px;
+
   p {
     margin-bottom: 0 !important;
   }

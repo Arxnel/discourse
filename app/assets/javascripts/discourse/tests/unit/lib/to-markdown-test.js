@@ -1,7 +1,13 @@
+import { setupTest } from "ember-qunit";
 import { module, test } from "qunit";
-import toMarkdown from "discourse/lib/to-markdown";
+import toMarkdown, {
+  addBlockDecorateCallback,
+  addTagDecorateCallback,
+} from "discourse/lib/to-markdown";
 
-module("Unit | Utility | to-markdown", function () {
+module("Unit | Utility | to-markdown", function (hooks) {
+  setupTest(hooks);
+
   test("converts styles between normal words", function (assert) {
     const html = `Line with <s>styles</s> <b><i>between</i></b> words.`;
     const markdown = `Line with ~~styles~~ ***between*** words.`;
@@ -350,6 +356,42 @@ helloWorld();</code>consectetur.`;
     assert.strictEqual(toMarkdown(html), markdown);
   });
 
+  test("strips user status from mentions", function (assert) {
+    const statusHtml = `
+        <img class="emoji user-status"
+             src="/images/emoji/twitter/desert_island.png?v=12"
+             title="vacation">
+    `;
+    const html = `Mentioning <a class="mention" href="/u/andrei">@andrei${statusHtml}</a>`;
+    const expectedMarkdown = `Mentioning @andrei`;
+
+    assert.strictEqual(toMarkdown(html), expectedMarkdown);
+  });
+
+  test("keeps hashtag-cooked and converts to bare hashtag with type", function (assert) {
+    const html = `
+      <p dir="ltr">This is <a class="hashtag-cooked" href="/c/ux/14" data-type="category" data-slug="ux">
+      <svg class="fa d-icon d-icon-folder svg-icon svg-node">
+        <use href="#folder"></use>
+      </svg>
+      <span>ux</span>
+      </a> and <a class="hashtag-cooked" href="/tag/design" data-slug="design">
+      <svg class="fa d-icon d-icon-tag svg-icon svg-node">
+        <use href="#tag"></use>
+      </svg>
+      <span>design</span>
+      </a> and <a class="hashtag-cooked" href="/c/uncategorized/design/22" data-type="category" data-slug="design" data-ref="uncategorized:design">
+      <svg class="fa d-icon d-icon-folder svg-icon svg-node">
+        <use href="#folder"></use>
+      </svg>
+      <span>design</span>
+      </a></p>
+    `;
+
+    const markdown = `This is #ux::category and #design and #uncategorized:design`;
+    assert.strictEqual(toMarkdown(html), markdown);
+  });
+
   test("keeps emoji and removes click count", function (assert) {
     const html = `
       <p>
@@ -426,9 +468,87 @@ there is a quote above
     assert.strictEqual(toMarkdown(html), markdown.trim());
   });
 
+  test("converts nested quotes to markdown", function (assert) {
+    let html = `
+      <aside class="quote no-group">
+        <blockquote>
+          <aside class="quote no-group">
+            <blockquote>
+              <p dir="ltr">test</p>
+            </blockquote>
+          </aside>
+          <p dir="ltr">test2</p>
+        </blockquote>
+      </aside>
+    `;
+
+    let markdown = `
+[quote]
+[quote]
+test
+[/quote]
+
+test2
+[/quote]
+`;
+
+    assert.strictEqual(toMarkdown(html), markdown.trim());
+  });
+
   test("strips base64 image URLs", function (assert) {
     const html =
       '<img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAZABkAAD/7AARRHVja3kAAQAEAAAAPAAA/+4AJkFkb2JlAGTAAAAAAQMAFQQDBgoNAAABywAAAgsAAAJpAAACyf/bAIQABgQEBAUEBgUFBgkGBQYJCwgGBggLDAoKCwoKDBAMDAwMDAwQDA4PEA8ODBMTFBQTExwbGxscHx8fHx8fHx8fHwEHBwcNDA0YEBAYGhURFRofHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8f/8IAEQgAEAAQAwERAAIRAQMRAf/EAJQAAQEBAAAAAAAAAAAAAAAAAAMFBwEAAwEAAAAAAAAAAAAAAAAAAAEDAhAAAQUBAQAAAAAAAAAAAAAAAgABAwQFESARAAIBAwIHAAAAAAAAAAAAAAERAgAhMRIDQWGRocEiIxIBAAAAAAAAAAAAAAAAAAAAIBMBAAMAAQQDAQAAAAAAAAAAAQARITHwQVGBYXGR4f/aAAwDAQACEQMRAAAB0UlMciEJn//aAAgBAQABBQK5bGtFn6pWi2K12wWTRkjb/9oACAECAAEFAvH/2gAIAQMAAQUCIuIJOqRndRiv/9oACAECAgY/Ah//2gAIAQMCBj8CH//aAAgBAQEGPwLWQzwHepfNbcUNfM4tUIbA9QL4AvnxTlAxacpWJReOlf/aAAgBAQMBPyHZDveuCyu4B4lz2lDKto2ca5uclPK0aoq32x8xgTSLeSgbyzT65n//2gAIAQIDAT8hlQjP/9oACAEDAwE/IaE9GcZFJ//aAAwDAQACEQMRAAAQ5F//2gAIAQEDAT8Q1oowKccI3KTdAWkPLw2ssIrwKYUzuJoUJsIHOCoG23ISlja+rU9QvCx//9oACAECAwE/EAuNIiKf/9oACAEDAwE/ECujJzHf7iwHOv5NhK+8efH50z//2Q==" />';
     assert.strictEqual(toMarkdown(html), "[image]");
+  });
+
+  test("addTagDecorateCallback", function (assert) {
+    const html = `<span class="loud">HELLO THERE</span>`;
+
+    addTagDecorateCallback(function (text) {
+      if (this.element.attributes.class === "loud") {
+        this.prefix = "^^";
+        this.suffix = "^^";
+        return text.toLowerCase();
+      }
+    });
+
+    assert.strictEqual(toMarkdown(html), "^^hello there^^");
+  });
+
+  test("addBlockDecorateCallback", function (assert) {
+    const html = `<div class="quiet">hey<br>there</div>`;
+
+    addBlockDecorateCallback(function () {
+      if (this.element.attributes.class === "quiet") {
+        this.prefix = "[quiet]";
+        this.suffix = "[/quiet]";
+      }
+    });
+
+    assert.strictEqual(toMarkdown(html), "[quiet]hey\nthere[/quiet]");
+  });
+
+  test("converts inline mathjax", function (assert) {
+    const html = `<p>Lorem ipsum <span class="math" data-applied-mathjax="true" style="display: none;">E=mc^2</span><span class="math-container,inline-math,mathjax-math" style=""><span id="MathJax-Element-1-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" style="font-size: 117%;"><span id="MJXc-Node-1" class="mjx-math"><span id="MJXc-Node-2" class="mjx-mrow"><span id="MJXc-Node-3" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.483em; padding-bottom: 0.27em; padding-right: 0.026em;">E</span></span><span id="MJXc-Node-4" class="mjx-mo MJXc-space3"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.056em; padding-bottom: 0.323em;">=</span></span><span id="MJXc-Node-5" class="mjx-mi MJXc-space3"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.216em; padding-bottom: 0.27em;">m</span></span><span id="MJXc-Node-6" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-7" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.216em; padding-bottom: 0.27em;">c</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.513em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-8" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.377em; padding-bottom: 0.323em;">2</span></span></span></span></span></span></span><script type="math/tex" id="MathJax-Element-1">E=mc^2</script></span> dolor sit amet.</p>`;
+    const markdown = `Lorem ipsum $E=mc^2$ dolor sit amet.`;
+    assert.strictEqual(toMarkdown(html), markdown);
+  });
+
+  test("converts block mathjax", function (assert) {
+    const html = `<p>Before</p>
+    <div class="math" data-applied-mathjax="true" style="display: none;">
+    \\sqrt{(-1)} \\; 2^3 \\; \\sum \\; \\pi
+    </div><div class="math-container,block-math,mathjax-math" style=""><span class="mjx-chtml MJXc-display" style="text-align: center;"><span id="MathJax-Element-2-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" style="font-size: 117%; text-align: center;"><span id="MJXc-Node-9" class="mjx-math"><span id="MJXc-Node-10" class="mjx-mrow"><span id="MJXc-Node-11" class="mjx-msqrt"><span class="mjx-box" style="padding-top: 0.045em;"><span class="mjx-surd"><span class="mjx-char MJXc-TeX-size2-R" style="padding-top: 0.911em; padding-bottom: 0.911em;">√</span></span><span class="mjx-box" style="padding-top: 0.315em; border-top: 1.4px solid;"><span id="MJXc-Node-12" class="mjx-mrow"><span id="MJXc-Node-13" class="mjx-mo"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.483em; padding-bottom: 0.59em;">(</span></span><span id="MJXc-Node-14" class="mjx-mo"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.323em; padding-bottom: 0.43em;">−</span></span><span id="MJXc-Node-15" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.377em; padding-bottom: 0.323em;">1</span></span><span id="MJXc-Node-16" class="mjx-mo"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.483em; padding-bottom: 0.59em;">)</span></span></span></span></span></span><span id="MJXc-Node-17" class="mjx-mspace" style="width: 0.278em; height: 0px;"></span><span id="MJXc-Node-18" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-19" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.377em; padding-bottom: 0.323em;">2</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-20" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.377em; padding-bottom: 0.377em;">3</span></span></span></span><span id="MJXc-Node-21" class="mjx-mspace" style="width: 0.278em; height: 0px;"></span><span id="MJXc-Node-22" class="mjx-mo MJXc-space1"><span class="mjx-char MJXc-TeX-size2-R" style="padding-top: 0.751em; padding-bottom: 0.751em;">∑</span></span><span id="MJXc-Node-23" class="mjx-mspace" style="width: 0.278em; height: 0px;"></span><span id="MJXc-Node-24" class="mjx-mi MJXc-space1"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.216em; padding-bottom: 0.27em; padding-right: 0.003em;">π</span></span></span></span></span></span><script type="math/tex; mode=display" id="MathJax-Element-2">\\sqrt{(-1)} \\; 2^3 \\; \\sum \\; \\pi</script></div>
+    <p>After</p>`;
+
+    const markdown = `Before
+
+$$
+\\sqrt{(-1)} \\; 2^3 \\; \\sum \\; \\pi
+$$
+
+After`;
+
+    assert.strictEqual(toMarkdown(html), markdown);
   });
 });

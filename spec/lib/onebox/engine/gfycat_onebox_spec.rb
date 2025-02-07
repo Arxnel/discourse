@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-describe Onebox::Engine::GfycatOnebox do
+RSpec.describe Onebox::Engine::GfycatOnebox do
   let(:link) { "https://gfycat.com/shrillnegativearrowana" }
   let(:html) { described_class.new(link).to_html }
   let(:placeholder_html) { described_class.new(link).placeholder_html }
 
-  before do
-    stub_request(:get, link).to_return(status: 200, body: onebox_response("gfycat"))
-  end
+  before { stub_request(:get, link).to_return(status: 200, body: onebox_response("gfycat")) }
 
   it "has the title" do
     expect(html).to include("shrillnegativearrowana")
@@ -33,5 +31,17 @@ describe Onebox::Engine::GfycatOnebox do
 
   it "has keywords" do
     expect(html).to include("<a href='https://gfycat.com/gifs/search/lego'>#lego</a>")
+  end
+
+  describe ".===" do
+    it "matches valid Gfycat URL" do
+      valid_url = URI("https://gfycat.com/some-gif")
+      expect(described_class === valid_url).to eq(true)
+    end
+
+    it "does not match URL with valid domain as part of another domain" do
+      malicious_url = URI("https://gfycat.com.malicious.com/some-gif")
+      expect(described_class === malicious_url).to eq(false)
+    end
   end
 end

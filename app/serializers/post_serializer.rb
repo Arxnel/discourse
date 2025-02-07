@@ -1,25 +1,24 @@
 # frozen_string_literal: true
 
 class PostSerializer < BasicPostSerializer
-
   # To pass in additional information we might need
-  INSTANCE_VARS ||= [
-    :parent_post,
-    :add_raw,
-    :add_title,
-    :single_post_link_counts,
-    :draft_sequence,
-    :post_actions,
-    :all_post_actions,
-    :add_excerpt
+  INSTANCE_VARS = %i[
+    parent_post
+    add_raw
+    add_title
+    single_post_link_counts
+    draft_sequence
+    post_actions
+    all_post_actions
+    add_excerpt
+    notice_created_by_users
   ]
 
-  INSTANCE_VARS.each do |v|
-    self.public_send(:attr_accessor, v)
-  end
+  INSTANCE_VARS.each { |v| self.public_send(:attr_accessor, v) }
 
   attributes :post_number,
              :post_type,
+             :posts_count,
              :updated_at,
              :reply_count,
              :reply_to_post_number,
@@ -40,11 +39,14 @@ class PostSerializer < BasicPostSerializer
              :flair_url,
              :flair_bg_color,
              :flair_color,
+             :flair_group_id,
+             :badges_granted,
              :version,
              :can_edit,
              :can_delete,
              :can_permanently_delete,
              :can_recover,
+             :can_see_hidden_post,
              :can_wiki,
              :link_counts,
              :read,
@@ -81,21 +83,29 @@ class PostSerializer < BasicPostSerializer
              :action_code_who,
              :action_code_path,
              :notice,
+             :notice_created_by_user,
              :last_wiki_edit,
              :locked,
              :excerpt,
+             :truncated,
              :reviewable_id,
              :reviewable_score_count,
-             :reviewable_score_pending_count
+             :reviewable_score_pending_count,
+             :user_suspended,
+             :user_status,
+             :mentioned_users,
+             :post_url
 
   def initialize(object, opts)
     super(object, opts)
 
     PostSerializer::INSTANCE_VARS.each do |name|
-      if opts.include? name
-        self.public_send("#{name}=", opts[name])
-      end
+      self.public_send("#{name}=", opts[name]) if opts.include? name
     end
+  end
+
+  def post_url
+    object&.url
   end
 
   def topic_slug
@@ -118,12 +128,24 @@ class PostSerializer < BasicPostSerializer
     @add_excerpt
   end
 
+  def include_truncated?
+    @add_excerpt
+  end
+
+  def truncated
+    true
+  end
+
   def topic_title
     topic&.title
   end
 
   def topic_html_title
     topic&.fancy_title
+  end
+
+  def posts_count
+    topic&.posts_count
   end
 
   def category_id
@@ -147,13 +169,14 @@ class PostSerializer < BasicPostSerializer
   end
 
   def include_group_moderator?
-    @group_moderator ||= begin
-      if @topic_view
-        @topic_view.category_group_moderator_user_ids.include?(object.user_id)
-      else
-        object&.user&.guardian&.is_category_group_moderator?(object&.topic&.category)
+    @group_moderator ||=
+      begin
+        if @topic_view
+          @topic_view.category_group_moderator_user_ids.include?(object.user_id)
+        else
+          object&.user&.guardian&.is_category_group_moderator?(object&.topic&.category)
+        end
       end
-    end
   end
 
   def yours
@@ -173,11 +196,15 @@ class PostSerializer < BasicPostSerializer
   end
 
   def include_can_permanently_delete?
-    SiteSetting.can_permanently_delete && object.deleted_at
+    SiteSetting.can_permanently_delete && scope.is_admin? && object.deleted_at
   end
 
   def can_recover
     scope.can_recover_post?(object)
+  end
+
+  def can_see_hidden_post
+    scope.can_see_hidden_post?(object)
   end
 
   def can_wiki
@@ -212,6 +239,22 @@ class PostSerializer < BasicPostSerializer
 
   def flair_color
     object.user&.flair_group&.flair_color
+  end
+
+  def flair_group_id
+    object.user&.flair_group_id
+  end
+
+  def badges_granted
+    return [] unless SiteSetting.enable_badges && SiteSetting.show_badges_in_post_header
+
+    if @topic_view
+      user_badges = @topic_view.post_user_badges[object.id] || []
+    else
+      user_badges = UserBadge.for_post_header_badges([object])
+    end
+
+    user_badges.map { |user_badge| BasicUserBadgeSerializer.new(user_badge, scope: scope).as_json }
   end
 
   def link_counts
@@ -256,7 +299,8 @@ class PostSerializer < BasicPostSerializer
   def reply_to_user
     {
       username: object.reply_to_user.username,
-      avatar_template: object.reply_to_user.avatar_template
+      name: object.reply_to_user.name,
+      avatar_template: object.reply_to_user.avatar_template,
     }
   end
 
@@ -280,41 +324,59 @@ class PostSerializer < BasicPostSerializer
     result = []
     can_see_post = scope.can_see_post?(object)
 
-    PostActionType.types.except(:bookmark).each do |sym, id|
+    @post_action_type_view =
+      @topic_view ? @topic_view.post_action_type_view : PostActionTypeView.new
+
+    public_flag_types = @post_action_type_view.public_types
+
+    @post_action_type_view.types.each do |sym, id|
       count_col = "#{sym}_count".to_sym
 
       count = object.public_send(count_col) if object.respond_to?(count_col)
       summary = { id: id, count: count }
 
-      if scope.post_can_act?(object, sym, opts: { taken_actions: actions }, can_see_post: can_see_post)
+      if scope.post_can_act?(
+           object,
+           sym,
+           opts: {
+             taken_actions: actions,
+             notify_flag_types: @post_action_type_view.notify_flag_types,
+             additional_message_types: @post_action_type_view.additional_message_types,
+             post_action_type_view: @post_action_type_view,
+           },
+           can_see_post: can_see_post,
+         )
         summary[:can_act] = true
       end
 
       if sym == :notify_user &&
-         (
-           (scope.current_user.present? && scope.current_user == object.user) ||
-           (object.user && object.user.bot?)
-         )
+           (
+             (scope.current_user.present? && scope.current_user == object.user) ||
+               (object.user && object.user.bot?)
+           )
+        summary.delete(:can_act)
+      end
 
+      if actions.present? && SiteSetting.allow_anonymous_likes && sym == :like &&
+           !scope.can_delete_post_action?(actions[id])
         summary.delete(:can_act)
       end
 
       if actions.present? && actions.has_key?(id)
         summary[:acted] = true
+
         summary[:can_undo] = true if scope.can_delete?(actions[id])
       end
 
       # only show public data
-      unless scope.is_staff? || PostActionType.public_types.values.include?(id)
+      unless scope.is_staff? || public_flag_types.values.include?(id)
         summary[:count] = summary[:acted] ? 1 : 0
       end
 
-      summary.delete(:count) if summary[:count] == 0
+      summary.delete(:count) if summary[:count].to_i.zero?
 
       # Only include it if the user can do it or it has a count
-      if summary[:can_act] || summary[:count]
-        result << summary
-      end
+      result << summary if summary[:can_act] || summary[:count]
     end
 
     result
@@ -335,7 +397,8 @@ class PostSerializer < BasicPostSerializer
   def include_link_counts?
     return true if @single_post_link_counts.present?
 
-    @topic_view.present? && @topic_view.link_counts.present? && @topic_view.link_counts[object.id].present?
+    @topic_view.present? && @topic_view.link_counts.present? &&
+      @topic_view.link_counts[object.id].present?
   end
 
   def include_read?
@@ -368,9 +431,9 @@ class PostSerializer < BasicPostSerializer
 
   def post_bookmark
     if @topic_view.present?
-      @post_bookmark ||= @topic_view.user_post_bookmarks.find { |bookmark| bookmark.post_id == object.id && !bookmark.for_topic }
+      @post_bookmark ||= @topic_view.bookmarks.find { |bookmark| bookmark.bookmarkable == object }
     else
-      @post_bookmark ||= object.bookmarks.find_by(user: scope.user, for_topic: false)
+      @post_bookmark ||= Bookmark.find_by(user: scope.user, bookmarkable: object)
     end
   end
 
@@ -457,6 +520,19 @@ class PostSerializer < BasicPostSerializer
     include_action_code? && action_code_path.present?
   end
 
+  def include_notice_created_by_user?
+    scope.is_staff? && notice.present? && notice_created_by_users.present?
+  end
+
+  def notice_created_by_user
+    return if notice.blank?
+    return if notice["type"] != Post.notices[:custom]
+    return if notice["created_by_user_id"].blank?
+    found_user = notice_created_by_users&.find { |user| user.id == notice["created_by_user_id"] }
+    return if !found_user
+    BasicUserSerializer.new(found_user, root: false).as_json
+  end
+
   def notice
     post_custom_fields[Post::NOTICE]
   end
@@ -492,9 +568,7 @@ class PostSerializer < BasicPostSerializer
   end
 
   def include_last_wiki_edit?
-    object.wiki &&
-    object.post_number == 1 &&
-    object.revisions.size > 0
+    object.wiki && object.post_number == 1 && object.revisions.size > 0
   end
 
   def include_hidden_reason_id?
@@ -541,7 +615,40 @@ class PostSerializer < BasicPostSerializer
     can_review_topic?
   end
 
-private
+  def user_suspended
+    true
+  end
+
+  def include_user_suspended?
+    object.user&.suspended?
+  end
+
+  def include_user_status?
+    SiteSetting.enable_user_status && object.user&.has_status?
+  end
+
+  def user_status
+    UserStatusSerializer.new(object.user&.user_status, root: false)
+  end
+
+  def mentioned_users
+    users =
+      if @topic_view && (mentioned_users = @topic_view.mentioned_users[object.id])
+        mentioned_users
+      else
+        query = User.includes(:user_option)
+        query = query.includes(:user_status) if SiteSetting.enable_user_status
+        query = query.where(username_lower: object.mentions)
+      end
+
+    users.map { |user| BasicUserSerializer.new(user, root: false, include_status: true).as_json }
+  end
+
+  def include_mentioned_users?
+    SiteSetting.enable_user_status
+  end
+
+  private
 
   def can_review_topic?
     return @can_review_topic unless @can_review_topic.nil?
@@ -555,7 +662,7 @@ private
   end
 
   def reviewable_scores
-    reviewable&.reviewable_scores&.to_a || []
+    reviewable&.reviewable_scores.to_a
   end
 
   def user_custom_fields_object
@@ -571,5 +678,4 @@ private
   def post_actions
     @post_actions ||= (@topic_view&.all_post_actions || {})[object.id]
   end
-
 end

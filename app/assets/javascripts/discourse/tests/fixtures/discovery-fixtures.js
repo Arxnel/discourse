@@ -8,19 +8,19 @@ export default {
       {
         id: 6973,
         username: "stellarhopper",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 19,
         username: "eviltrout",
         name: "Evil Trout",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 14, username: "clay", avatar_template: "/images/avatar.png" },
       {
         id: 32,
         username: "codinghorror",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 1917, username: "sil", avatar_template: "/images/avatar.png" },
       { id: 7197, username: "peeja", avatar_template: "/images/avatar.png" },
@@ -28,20 +28,20 @@ export default {
       {
         id: 8021,
         username: "Abhishek_Gupta",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2291, username: "PabloC", avatar_template: "/images/avatar.png" },
       { id: 791, username: "srid", avatar_template: "/images/avatar.png" },
       {
         id: 1580,
         username: "ABillionSuns",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 7270, username: "mhurwi", avatar_template: "/images/avatar.png" },
       {
         id: 6695,
         username: "illspirit",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 6929, username: "BCHK", avatar_template: "/images/avatar.png" },
       { id: 4385, username: "jeans", avatar_template: "/images/avatar.png" },
@@ -52,35 +52,35 @@ export default {
       {
         id: 8134,
         username: "iontishina",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2072, username: "nXqd", avatar_template: "/images/avatar.png" },
       {
         id: 4983,
         username: "hey_julien",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 3657,
         username: "steelmaiden",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2624, username: "BowlingX", avatar_template: "/images/avatar.png" },
       {
         id: 8085,
         username: "watchmanmonitor",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 4612, username: "Iszi", avatar_template: "/images/avatar.png" },
       {
         id: 8018,
         username: "shivermetimbers",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 6060,
         username: "lightyear",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2, username: "neil", avatar_template: "/images/avatar.png" },
       { id: 8037, username: "printec", avatar_template: "/images/avatar.png" },
@@ -88,24 +88,24 @@ export default {
       {
         id: 6283,
         username: "hrishikesh",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 471,
         username: "BhaelOchon",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 6548, username: "michaeld", avatar_template: "/images/avatar.png" },
       {
         id: 7286,
         username: "mrotsnahoj",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 3169, username: "dgw", avatar_template: "/images/avatar.png" },
       {
         id: 926,
         username: "martinnormark",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2003, username: "taylor", avatar_template: "/images/avatar.png" },
       { id: 369, username: "CvX", avatar_template: "/images/avatar.png" },
@@ -114,12 +114,12 @@ export default {
       {
         id: 6677,
         username: "Tropnevad",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 5048,
         username: "SneakySly",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 7333, username: "Jong", avatar_template: "/images/avatar.png" },
       { id: 3124, username: "sipp11", avatar_template: "/images/avatar.png" },
@@ -128,7 +128,7 @@ export default {
       { id: 6680, username: "cdman", avatar_template: "/images/avatar.png" },
       { id: 500, username: "aeid", avatar_template: "/images/avatar.png" },
       { id: 8, username: "geek", avatar_template: "/images/avatar.png" },
-      { id: 606, username: "Caffeine", avatar_template: "/images/avatar.png" }
+      { id: 606, username: "Caffeine", avatar_template: "/images/avatar.png" },
     ],
     topic_list: {
       can_create_topic: false,
@@ -171,9 +171,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 6973
-            }
-          ]
+              user_id: 6973,
+            },
+          ],
         },
         {
           id: 1,
@@ -205,8 +205,12 @@ export default {
             { extras: null, description: "Original Poster", user_id: 1 },
             { extras: null, description: "Most Posts", user_id: 19 },
             { extras: null, description: "Frequent Poster", user_id: 14 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11997,
@@ -236,9 +240,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 1917
-            }
-          ]
+              user_id: 1917,
+            },
+          ],
         },
         {
           id: 11996,
@@ -246,8 +250,7 @@ export default {
             "It's really hard to navigate the Create Topic / Reply pane with the keyboard",
           fancy_title:
             "It&rsquo;s really hard to navigate the Create Topic / Reply pane with the keyboard",
-          slug:
-            "its-really-hard-to-navigate-the-create-topic-reply-pane-with-the-keyboard",
+          slug: "its-really-hard-to-navigate-the-create-topic-reply-pane-with-the-keyboard",
           posts_count: 2,
           reply_count: 0,
           highest_post_number: 2,
@@ -272,9 +275,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 1995
-            }
-          ]
+              user_id: 1995,
+            },
+          ],
         },
         {
           id: 11994,
@@ -304,9 +307,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 8021
-            }
-          ]
+              user_id: 8021,
+            },
+          ],
         },
         {
           id: 11995,
@@ -336,9 +339,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 2291
-            }
-          ]
+              user_id: 2291,
+            },
+          ],
         },
         {
           id: 11993,
@@ -368,9 +371,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 8021
-            }
-          ]
+              user_id: 8021,
+            },
+          ],
         },
         {
           id: 9540,
@@ -404,9 +407,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 6695
-            }
-          ]
+              user_id: 6695,
+            },
+          ],
         },
         {
           id: 11957,
@@ -439,9 +442,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 4385
-            }
-          ]
+              user_id: 4385,
+            },
+          ],
         },
         {
           id: 11973,
@@ -471,11 +474,11 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 7073
+              user_id: 7073,
             },
             { extras: null, description: "Most Posts", user_id: 1 },
-            { extras: null, description: "Frequent Poster", user_id: 6626 }
-          ]
+            { extras: null, description: "Frequent Poster", user_id: 6626 },
+          ],
         },
         {
           id: 11835,
@@ -508,9 +511,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 8134
-            }
-          ]
+              user_id: 8134,
+            },
+          ],
         },
         {
           id: 11992,
@@ -540,9 +543,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 2072
-            }
-          ]
+              user_id: 2072,
+            },
+          ],
         },
         {
           id: 9214,
@@ -576,9 +579,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 2072
-            }
-          ]
+              user_id: 2072,
+            },
+          ],
         },
         {
           id: 11989,
@@ -606,8 +609,12 @@ export default {
           category_id: 6,
           posters: [
             { extras: null, description: "Original Poster", user_id: 8085 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 10866,
@@ -637,10 +644,10 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 6973
+              user_id: 6973,
             },
-            { extras: null, description: "Most Posts", user_id: 32 }
-          ]
+            { extras: null, description: "Most Posts", user_id: 32 },
+          ],
         },
         {
           id: 11988,
@@ -668,8 +675,8 @@ export default {
           category_id: 6,
           posters: [
             { extras: null, description: "Original Poster", user_id: 6973 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 1 }
-          ]
+            { extras: "latest", description: "Most Recent Poster", user_id: 1 },
+          ],
         },
         {
           id: 6266,
@@ -697,8 +704,12 @@ export default {
           category_id: 17,
           posters: [
             { extras: null, description: "Original Poster", user_id: 4612 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11610,
@@ -729,8 +740,12 @@ export default {
             { extras: null, description: "Most Posts", user_id: 4263 },
             { extras: null, description: "Frequent Poster", user_id: 6060 },
             { extras: null, description: "Frequent Poster", user_id: 6626 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11888,
@@ -761,11 +776,11 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 6695
+              user_id: 6695,
             },
             { extras: null, description: "Most Posts", user_id: 32 },
-            { extras: null, description: "Frequent Poster", user_id: 2 }
-          ]
+            { extras: null, description: "Frequent Poster", user_id: 2 },
+          ],
         },
         {
           id: 11985,
@@ -773,8 +788,7 @@ export default {
             "Installation nearly installs on Centos 6.5 with Apache/Phusion",
           fancy_title:
             "Installation nearly installs on Centos 6.5 with Apache/Phusion",
-          slug:
-            "installation-nearly-installs-on-centos-6-5-with-apache-phusion",
+          slug: "installation-nearly-installs-on-centos-6-5-with-apache-phusion",
           posts_count: 1,
           reply_count: 0,
           highest_post_number: 1,
@@ -798,9 +812,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 8037
-            }
-          ]
+              user_id: 8037,
+            },
+          ],
         },
         {
           id: 11981,
@@ -834,9 +848,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 1995
-            }
-          ]
+              user_id: 1995,
+            },
+          ],
         },
         {
           id: 9408,
@@ -870,9 +884,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 4263
-            }
-          ]
+              user_id: 4263,
+            },
+          ],
         },
         {
           id: 11896,
@@ -902,8 +916,8 @@ export default {
             { extras: null, description: "Original Poster", user_id: 6548 },
             { extras: null, description: "Most Posts", user_id: 32 },
             { extras: null, description: "Frequent Poster", user_id: 2 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 1 }
-          ]
+            { extras: "latest", description: "Most Recent Poster", user_id: 1 },
+          ],
         },
         {
           id: 10511,
@@ -934,8 +948,12 @@ export default {
             { extras: null, description: "Most Posts", user_id: 3169 },
             { extras: null, description: "Frequent Poster", user_id: 4263 },
             { extras: null, description: "Frequent Poster", user_id: 6626 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 1589,
@@ -966,8 +984,12 @@ export default {
             { extras: null, description: "Most Posts", user_id: 2003 },
             { extras: null, description: "Frequent Poster", user_id: 369 },
             { extras: null, description: "Frequent Poster", user_id: 562 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11763,
@@ -998,13 +1020,13 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 6548
+              user_id: 6548,
             },
             { extras: null, description: "Most Posts", user_id: 6653 },
             { extras: null, description: "Frequent Poster", user_id: 6677 },
             { extras: null, description: "Frequent Poster", user_id: 5048 },
-            { extras: null, description: "Frequent Poster", user_id: 7333 }
-          ]
+            { extras: null, description: "Frequent Poster", user_id: 7333 },
+          ],
         },
         {
           id: 9151,
@@ -1036,9 +1058,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11977,
@@ -1067,8 +1089,12 @@ export default {
           category_id: 2,
           posters: [
             { extras: null, description: "Original Poster", user_id: 7604 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 10201,
@@ -1103,9 +1129,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 1995
-            }
-          ]
+              user_id: 1995,
+            },
+          ],
         },
         {
           id: 531,
@@ -1136,11 +1162,15 @@ export default {
             { extras: null, description: "Most Posts", user_id: 8 },
             { extras: null, description: "Frequent Poster", user_id: 1 },
             { extras: null, description: "Frequent Poster", user_id: 606 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
-        }
-      ]
-    }
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
+        },
+      ],
+    },
   },
   "/bookmarks.json": {
     users: [
@@ -1151,19 +1181,19 @@ export default {
       {
         id: 6973,
         username: "stellarhopper",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 19,
         username: "eviltrout",
         name: "Evil Trout",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 14, username: "clay", avatar_template: "/images/avatar.png" },
       {
         id: 32,
         username: "codinghorror",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 1917, username: "sil", avatar_template: "/images/avatar.png" },
       { id: 7197, username: "peeja", avatar_template: "/images/avatar.png" },
@@ -1171,20 +1201,20 @@ export default {
       {
         id: 8021,
         username: "Abhishek_Gupta",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2291, username: "PabloC", avatar_template: "/images/avatar.png" },
       { id: 791, username: "srid", avatar_template: "/images/avatar.png" },
       {
         id: 1580,
         username: "ABillionSuns",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 7270, username: "mhurwi", avatar_template: "/images/avatar.png" },
       {
         id: 6695,
         username: "illspirit",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 6929, username: "BCHK", avatar_template: "/images/avatar.png" },
       { id: 4385, username: "jeans", avatar_template: "/images/avatar.png" },
@@ -1195,35 +1225,35 @@ export default {
       {
         id: 8134,
         username: "iontishina",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2072, username: "nXqd", avatar_template: "/images/avatar.png" },
       {
         id: 4983,
         username: "hey_julien",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 3657,
         username: "steelmaiden",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2624, username: "BowlingX", avatar_template: "/images/avatar.png" },
       {
         id: 8085,
         username: "watchmanmonitor",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 4612, username: "Iszi", avatar_template: "/images/avatar.png" },
       {
         id: 8018,
         username: "shivermetimbers",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 6060,
         username: "lightyear",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2, username: "neil", avatar_template: "/images/avatar.png" },
       { id: 8037, username: "printec", avatar_template: "/images/avatar.png" },
@@ -1231,24 +1261,24 @@ export default {
       {
         id: 6283,
         username: "hrishikesh",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 471,
         username: "BhaelOchon",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 6548, username: "michaeld", avatar_template: "/images/avatar.png" },
       {
         id: 7286,
         username: "mrotsnahoj",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 3169, username: "dgw", avatar_template: "/images/avatar.png" },
       {
         id: 926,
         username: "martinnormark",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2003, username: "taylor", avatar_template: "/images/avatar.png" },
       { id: 369, username: "CvX", avatar_template: "/images/avatar.png" },
@@ -1257,12 +1287,12 @@ export default {
       {
         id: 6677,
         username: "Tropnevad",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 5048,
         username: "SneakySly",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 7333, username: "Jong", avatar_template: "/images/avatar.png" },
       { id: 3124, username: "sipp11", avatar_template: "/images/avatar.png" },
@@ -1271,7 +1301,7 @@ export default {
       { id: 6680, username: "cdman", avatar_template: "/images/avatar.png" },
       { id: 500, username: "aeid", avatar_template: "/images/avatar.png" },
       { id: 8, username: "geek", avatar_template: "/images/avatar.png" },
-      { id: 606, username: "Caffeine", avatar_template: "/images/avatar.png" }
+      { id: 606, username: "Caffeine", avatar_template: "/images/avatar.png" },
     ],
     topic_list: {
       can_create_topic: false,
@@ -1314,9 +1344,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 6973
-            }
-          ]
+              user_id: 6973,
+            },
+          ],
         },
         {
           id: 1,
@@ -1348,8 +1378,12 @@ export default {
             { extras: null, description: "Original Poster", user_id: 1 },
             { extras: null, description: "Most Posts", user_id: 19 },
             { extras: null, description: "Frequent Poster", user_id: 14 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11997,
@@ -1379,12 +1413,12 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 1917
-            }
-          ]
-        }
-      ]
-    }
+              user_id: 1917,
+            },
+          ],
+        },
+      ],
+    },
   },
   "/categories.json": {
     category_list: {
@@ -1440,8 +1474,8 @@ export default {
               last_poster: {
                 id: 8021,
                 username: "Abhishek_Gupta",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11888,
@@ -1466,8 +1500,8 @@ export default {
               last_poster: {
                 id: 6695,
                 username: "illspirit",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 9151,
@@ -1491,10 +1525,10 @@ export default {
               last_poster: {
                 id: 32,
                 username: "codinghorror",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 2,
@@ -1520,6 +1554,27 @@ export default {
           description_excerpt:
             "Discussion about features or potential features of Discourse: how they work, why they work, etc.",
           featured_user_ids: [1917, 4385, 2072, 32, 4263],
+          subcategory_list: [
+            {
+              id: 26,
+              name: "spec",
+              color: "33B0B0",
+              text_color: "FFFFFF",
+              slug: "spec",
+              topic_count: 20,
+              post_count: 278,
+              description:
+                "My idea here is to have mini specs for features we would like built but have no bandwidth to build",
+              description_text:
+                "My idea here is to have mini specs for features we would like built but have no bandwidth to build",
+              topic_url: "/t/about-the-spec-category/13965",
+              read_restricted: false,
+              permission: 1,
+              parent_category_id: 2,
+              notification_level: null,
+              background_url: null,
+            },
+          ],
           topics: [
             {
               id: 11997,
@@ -1542,8 +1597,8 @@ export default {
               last_poster: {
                 id: 1917,
                 username: "sil",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11957,
@@ -1568,8 +1623,8 @@ export default {
               last_poster: {
                 id: 4385,
                 username: "jeans",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11992,
@@ -1592,10 +1647,10 @@ export default {
               last_poster: {
                 id: 2072,
                 username: "nXqd",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 6,
@@ -1643,8 +1698,8 @@ export default {
               last_poster: {
                 id: 2291,
                 username: "PabloC",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11989,
@@ -1667,8 +1722,8 @@ export default {
               last_poster: {
                 id: 32,
                 username: "codinghorror",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 10866,
@@ -1691,10 +1746,10 @@ export default {
               last_poster: {
                 id: 6973,
                 username: "stellarhopper",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 7,
@@ -1744,8 +1799,8 @@ export default {
               last_poster: {
                 id: 7995,
                 username: "Hunter",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11993,
@@ -1768,8 +1823,8 @@ export default {
               last_poster: {
                 id: 8021,
                 username: "Abhishek_Gupta",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 10201,
@@ -1777,8 +1832,7 @@ export default {
                 "How To override an existing handlebars template from plugin",
               fancy_title:
                 "How To override an existing handlebars template from plugin",
-              slug:
-                "how-to-override-an-existing-handlebars-template-from-plugin",
+              slug: "how-to-override-an-existing-handlebars-template-from-plugin",
               posts_count: 6,
               reply_count: 1,
               highest_post_number: 6,
@@ -1795,10 +1849,10 @@ export default {
               last_poster: {
                 id: 1995,
                 username: "zogstrip",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 9,
@@ -1831,8 +1885,7 @@ export default {
                 "It's really hard to navigate the Create Topic / Reply pane with the keyboard",
               fancy_title:
                 "It&rsquo;s really hard to navigate the Create Topic / Reply pane with the keyboard",
-              slug:
-                "its-really-hard-to-navigate-the-create-topic-reply-pane-with-the-keyboard",
+              slug: "its-really-hard-to-navigate-the-create-topic-reply-pane-with-the-keyboard",
               posts_count: 2,
               reply_count: 0,
               highest_post_number: 2,
@@ -1849,8 +1902,8 @@ export default {
               last_poster: {
                 id: 1995,
                 username: "zogstrip",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11973,
@@ -1873,8 +1926,8 @@ export default {
               last_poster: {
                 id: 7073,
                 username: "5an1ty",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 5542,
@@ -1897,10 +1950,10 @@ export default {
               last_poster: {
                 id: 1995,
                 username: "zogstrip",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 5,
@@ -1949,8 +2002,8 @@ export default {
               last_poster: {
                 id: 6548,
                 username: "michaeld",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 531,
@@ -1973,8 +2026,8 @@ export default {
               last_poster: {
                 id: 32,
                 username: "codinghorror",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11965,
@@ -1982,8 +2035,7 @@ export default {
                 "In your opinion, what is the best wiki engine to be associated with discourse?",
               fancy_title:
                 "In your opinion, what is the best wiki engine to be associated with discourse?",
-              slug:
-                "in-your-opinion-what-is-the-best-wiki-engine-to-be-associated-with-discourse",
+              slug: "in-your-opinion-what-is-the-best-wiki-engine-to-be-associated-with-discourse",
               posts_count: 1,
               reply_count: 0,
               highest_post_number: 1,
@@ -2000,10 +2052,10 @@ export default {
               last_poster: {
                 id: 8202,
                 username: "Matthieu",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 8,
@@ -2051,8 +2103,8 @@ export default {
               last_poster: {
                 id: 6695,
                 username: "illspirit",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11971,
@@ -2060,8 +2112,7 @@ export default {
                 "Installing Discourse on Ubuntu 12.04 with Parallels Plesk and Apache",
               fancy_title:
                 "Installing Discourse on Ubuntu 12.04 with Parallels Plesk and Apache",
-              slug:
-                "installing-discourse-on-ubuntu-12-04-with-parallels-plesk-and-apache",
+              slug: "installing-discourse-on-ubuntu-12-04-with-parallels-plesk-and-apache",
               posts_count: 3,
               reply_count: 1,
               highest_post_number: 3,
@@ -2078,8 +2129,8 @@ export default {
               last_poster: {
                 id: 7030,
                 username: "naabster",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 10844,
@@ -2102,10 +2153,10 @@ export default {
               last_poster: {
                 id: 1,
                 username: "sam",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 17,
@@ -2154,8 +2205,8 @@ export default {
               last_poster: {
                 id: 32,
                 username: "codinghorror",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11557,
@@ -2180,8 +2231,8 @@ export default {
               last_poster: {
                 id: 6973,
                 username: "stellarhopper",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 6266,
@@ -2204,10 +2255,10 @@ export default {
               last_poster: {
                 id: 32,
                 username: "codinghorror",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 11,
@@ -2255,8 +2306,8 @@ export default {
               last_poster: {
                 id: 8163,
                 username: "znation",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 6242,
@@ -2281,8 +2332,8 @@ export default {
               last_poster: {
                 id: 7796,
                 username: "almereyda",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 4738,
@@ -2305,10 +2356,10 @@ export default {
               last_poster: {
                 id: 32,
                 username: "codinghorror",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 3,
@@ -2358,8 +2409,8 @@ export default {
               last_poster: {
                 id: 32,
                 username: "codinghorror",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11943,
@@ -2382,8 +2433,8 @@ export default {
               last_poster: {
                 id: 19,
                 username: "eviltrout",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11822,
@@ -2406,10 +2457,10 @@ export default {
               last_poster: {
                 id: 32,
                 username: "codinghorror",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 12,
@@ -2457,8 +2508,8 @@ export default {
               last_poster: {
                 id: 2,
                 username: "neil",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 2544,
@@ -2481,8 +2532,8 @@ export default {
               last_poster: {
                 id: 2128,
                 username: "ultimape",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 424,
@@ -2506,10 +2557,10 @@ export default {
               last_poster: {
                 id: 2128,
                 username: "ultimape",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 13,
@@ -2557,8 +2608,8 @@ export default {
               last_poster: {
                 id: 8134,
                 username: "iontishina",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 5751,
@@ -2581,8 +2632,8 @@ export default {
               last_poster: {
                 id: 1995,
                 username: "zogstrip",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 5898,
@@ -2605,10 +2656,10 @@ export default {
               last_poster: {
                 id: 6626,
                 username: "riking",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 4,
@@ -2641,8 +2692,7 @@ export default {
                 "UX confusion (or me confusion) is it possible to edit old posts or only your most recent post in a topic?",
               fancy_title:
                 "UX confusion (or me confusion) is it possible to edit old posts or only your most recent post in a topic?",
-              slug:
-                "ux-confusion-or-me-confusion-is-it-possible-to-edit-old-posts-or-only-your-most-recent-post-in-a-topic",
+              slug: "ux-confusion-or-me-confusion-is-it-possible-to-edit-old-posts-or-only-your-most-recent-post-in-a-topic",
               posts_count: 3,
               reply_count: 0,
               highest_post_number: 3,
@@ -2659,8 +2709,8 @@ export default {
               last_poster: {
                 id: 32,
                 username: "codinghorror",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 9631,
@@ -2668,8 +2718,7 @@ export default {
                 "All the options to deploy Discourse with their relative pros and cons",
               fancy_title:
                 "All the options to deploy Discourse with their relative pros and cons",
-              slug:
-                "all-the-options-to-deploy-discourse-with-their-relative-pros-and-cons",
+              slug: "all-the-options-to-deploy-discourse-with-their-relative-pros-and-cons",
               posts_count: 14,
               reply_count: 7,
               highest_post_number: 15,
@@ -2686,8 +2735,8 @@ export default {
               last_poster: {
                 id: 3929,
                 username: "ScotterC",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 4325,
@@ -2710,10 +2759,10 @@ export default {
               last_poster: {
                 id: 32,
                 username: "codinghorror",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 14,
@@ -2761,8 +2810,8 @@ export default {
               last_poster: {
                 id: 6548,
                 username: "michaeld",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11571,
@@ -2786,8 +2835,8 @@ export default {
               last_poster: {
                 id: 2291,
                 username: "PabloC",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11594,
@@ -2795,8 +2844,7 @@ export default {
                 "Need someone to fix a topic in my discourse install that won't load for moderators. Will pay",
               fancy_title:
                 "Need someone to fix a topic in my discourse install that won&rsquo;t load for moderators. Will pay",
-              slug:
-                "need-someone-to-fix-a-topic-in-my-discourse-install-that-wont-load-for-moderators-will-pay",
+              slug: "need-someone-to-fix-a-topic-in-my-discourse-install-that-wont-load-for-moderators-will-pay",
               posts_count: 4,
               reply_count: 1,
               highest_post_number: 4,
@@ -2813,10 +2861,10 @@ export default {
               last_poster: {
                 id: 32,
                 username: "codinghorror",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
         },
         {
           id: 10,
@@ -2849,8 +2897,7 @@ export default {
                 "Twitter login with Passenger + Varnish - quick lessons learned",
               fancy_title:
                 "Twitter login with Passenger + Varnish - quick lessons learned",
-              slug:
-                "twitter-login-with-passenger-varnish-quick-lessons-learned",
+              slug: "twitter-login-with-passenger-varnish-quick-lessons-learned",
               posts_count: 9,
               reply_count: 3,
               highest_post_number: 9,
@@ -2867,8 +2914,8 @@ export default {
               last_poster: {
                 id: 7984,
                 username: "sophearak",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 7229,
@@ -2891,8 +2938,8 @@ export default {
               last_poster: {
                 id: 1995,
                 username: "zogstrip",
-                avatar_template: "/images/avatar.png"
-              }
+                avatar_template: "/images/avatar.png",
+              },
             },
             {
               id: 11628,
@@ -2900,8 +2947,7 @@ export default {
                 "My experience with a successful migration (hints for a guide)",
               fancy_title:
                 "My experience with a successful migration (hints for a guide)",
-              slug:
-                "my-experience-with-a-successful-migration-hints-for-a-guide",
+              slug: "my-experience-with-a-successful-migration-hints-for-a-guide",
               posts_count: 3,
               reply_count: 1,
               highest_post_number: 3,
@@ -2918,13 +2964,13 @@ export default {
               last_poster: {
                 id: 6018,
                 username: "robypez",
-                avatar_template: "/images/avatar.png"
-              }
-            }
-          ]
-        }
-      ]
-    }
+                avatar_template: "/images/avatar.png",
+              },
+            },
+          ],
+        },
+      ],
+    },
   },
   "/c/bug/1/l/latest.json": {
     users: [
@@ -2932,17 +2978,17 @@ export default {
       {
         id: 32,
         username: "codinghorror",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 8021,
         username: "Abhishek_Gupta",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 6695,
         username: "illspirit",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2, username: "neil", avatar_template: "/images/avatar.png" },
       { id: 3124, username: "sipp11", avatar_template: "/images/avatar.png" },
@@ -2959,42 +3005,42 @@ export default {
       {
         id: 5048,
         username: "SneakySly",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 7731, username: "YOU", avatar_template: "/images/avatar.png" },
       {
         id: 7985,
         username: "onlinedev",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 3415, username: "radq", avatar_template: "/images/avatar.png" },
       {
         id: 5351,
         username: "erlend_sh",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 471,
         username: "BhaelOchon",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 7, username: "pekka", avatar_template: "/images/avatar.png" },
       {
         id: 4780,
         username: "HugoAlmeida",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 5053, username: "Blue", avatar_template: "/images/avatar.png" },
       { id: 212, username: "alxndr", avatar_template: "/images/avatar.png" },
       {
         id: 6118,
         username: "lukelarris",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 7076,
         username: "philnelson",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 4851, username: "jab", avatar_template: "/images/avatar.png" },
       { id: 4457, username: "Lee_Ars", avatar_template: "/images/avatar.png" },
@@ -3006,8 +3052,8 @@ export default {
       {
         id: 6314,
         username: "rafaelfranca",
-        avatar_template: "/images/avatar.png"
-      }
+        avatar_template: "/images/avatar.png",
+      },
     ],
     topic_list: {
       can_create_topic: false,
@@ -3044,8 +3090,12 @@ export default {
           category_id: 1,
           posters: [
             { extras: null, description: "Original Poster", user_id: 1 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11994,
@@ -3075,9 +3125,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 8021
-            }
-          ]
+              user_id: 8021,
+            },
+          ],
         },
         {
           id: 11888,
@@ -3108,11 +3158,11 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 6695
+              user_id: 6695,
             },
             { extras: null, description: "Most Posts", user_id: 32 },
-            { extras: null, description: "Frequent Poster", user_id: 2 }
-          ]
+            { extras: null, description: "Frequent Poster", user_id: 2 },
+          ],
         },
         {
           id: 9151,
@@ -3144,9 +3194,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 10911,
@@ -3154,8 +3204,7 @@ export default {
             "/users/activate-account pulling blank logo instead of defaulting to h2",
           fancy_title:
             "/users/activate-account pulling blank logo instead of defaulting to h2",
-          slug:
-            "users-activate-account-pulling-blank-logo-instead-of-defaulting-to-h2",
+          slug: "users-activate-account-pulling-blank-logo-instead-of-defaulting-to-h2",
           posts_count: 3,
           reply_count: 1,
           highest_post_number: 3,
@@ -3177,8 +3226,12 @@ export default {
           category_id: 1,
           posters: [
             { extras: null, description: "Original Poster", user_id: 7513 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 19 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 19,
+            },
+          ],
         },
         {
           id: 11937,
@@ -3207,8 +3260,8 @@ export default {
           posters: [
             { extras: null, description: "Original Poster", user_id: 3 },
             { extras: null, description: "Most Posts", user_id: 7073 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 1 }
-          ]
+            { extras: "latest", description: "Most Recent Poster", user_id: 1 },
+          ],
         },
         {
           id: 6625,
@@ -3239,9 +3292,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11225,
@@ -3272,9 +3325,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11903,
@@ -3304,12 +3357,12 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 6377
+              user_id: 6377,
             },
             { extras: null, description: "Most Posts", user_id: 1496 },
             { extras: null, description: "Frequent Poster", user_id: 1 },
-            { extras: null, description: "Frequent Poster", user_id: 19 }
-          ]
+            { extras: null, description: "Frequent Poster", user_id: 19 },
+          ],
         },
         {
           id: 11969,
@@ -3339,9 +3392,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 7995
-            }
-          ]
+              user_id: 7995,
+            },
+          ],
         },
         {
           id: 11945,
@@ -3373,9 +3426,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Frequent Poster",
-              user_id: 1995
-            }
-          ]
+              user_id: 1995,
+            },
+          ],
         },
         {
           id: 11520,
@@ -3409,9 +3462,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11597,
@@ -3419,8 +3472,7 @@ export default {
             'All categories drop down does not close after clicking on first menu "all categories"',
           fancy_title:
             "All categories drop down does not close after clicking on first menu &ldquo;all categories&rdquo;",
-          slug:
-            "all-categories-drop-down-does-not-close-after-clicking-on-first-menu-all-categories",
+          slug: "all-categories-drop-down-does-not-close-after-clicking-on-first-menu-all-categories",
           posts_count: 5,
           reply_count: 2,
           highest_post_number: 5,
@@ -3446,9 +3498,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 3415
-            }
-          ]
+              user_id: 3415,
+            },
+          ],
         },
         {
           id: 11962,
@@ -3477,8 +3529,12 @@ export default {
           category_id: 1,
           posters: [
             { extras: null, description: "Original Poster", user_id: 7073 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11831,
@@ -3509,8 +3565,12 @@ export default {
             { extras: null, description: "Most Posts", user_id: 1 },
             { extras: null, description: "Frequent Poster", user_id: 471 },
             { extras: null, description: "Frequent Poster", user_id: 32 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 19 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 19,
+            },
+          ],
         },
         {
           id: 11916,
@@ -3541,9 +3601,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 1995
-            }
-          ]
+              user_id: 1995,
+            },
+          ],
         },
         {
           id: 10425,
@@ -3574,9 +3634,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 7
-            }
-          ]
+              user_id: 7,
+            },
+          ],
         },
         {
           id: 6557,
@@ -3606,8 +3666,8 @@ export default {
             { extras: null, description: "Original Poster", user_id: 4780 },
             { extras: null, description: "Most Posts", user_id: 5053 },
             { extras: null, description: "Frequent Poster", user_id: 32 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 2 }
-          ]
+            { extras: "latest", description: "Most Recent Poster", user_id: 2 },
+          ],
         },
         {
           id: 11944,
@@ -3638,9 +3698,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 1995
-            }
-          ]
+              user_id: 1995,
+            },
+          ],
         },
         {
           id: 10462,
@@ -3668,8 +3728,12 @@ export default {
           category_id: 1,
           posters: [
             { extras: null, description: "Original Poster", user_id: 6695 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11932,
@@ -3697,8 +3761,12 @@ export default {
           category_id: 1,
           posters: [
             { extras: null, description: "Original Poster", user_id: 6626 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 10357,
@@ -3733,9 +3801,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 10114,
@@ -3765,8 +3833,12 @@ export default {
             { extras: null, description: "Original Poster", user_id: 1 },
             { extras: null, description: "Most Posts", user_id: 7076 },
             { extras: null, description: "Frequent Poster", user_id: 2 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 6330,
@@ -3796,8 +3868,12 @@ export default {
           posters: [
             { extras: null, description: "Original Poster", user_id: 4851 },
             { extras: null, description: "Most Posts", user_id: 2 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 8367,
@@ -3829,8 +3905,12 @@ export default {
             { extras: null, description: "Most Posts", user_id: 6280 },
             { extras: null, description: "Frequent Poster", user_id: 3681 },
             { extras: null, description: "Frequent Poster", user_id: 1621 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 8815,
@@ -3864,9 +3944,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Frequent Poster",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11371,
@@ -3897,8 +3977,8 @@ export default {
             { extras: null, description: "Most Posts", user_id: 19 },
             { extras: null, description: "Frequent Poster", user_id: 6314 },
             { extras: null, description: "Frequent Poster", user_id: 32 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 1 }
-          ]
+            { extras: "latest", description: "Most Recent Poster", user_id: 1 },
+          ],
         },
         {
           id: 9908,
@@ -3927,8 +4007,12 @@ export default {
           posters: [
             { extras: null, description: "Original Poster", user_id: 5351 },
             { extras: null, description: "Most Posts", user_id: 471 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 6134,
@@ -3936,8 +4020,7 @@ export default {
             "Unread topic is stuck as unread after insertion of staff message",
           fancy_title:
             "Unread topic is stuck as unread after insertion of staff message",
-          slug:
-            "unread-topic-is-stuck-as-unread-after-insertion-of-staff-message",
+          slug: "unread-topic-is-stuck-as-unread-after-insertion-of-staff-message",
           posts_count: 5,
           reply_count: 1,
           highest_post_number: 5,
@@ -3961,8 +4044,12 @@ export default {
           posters: [
             { extras: null, description: "Original Poster", user_id: 3681 },
             { extras: null, description: "Most Posts", user_id: 5351 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11914,
@@ -3992,12 +4079,12 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 1
-            }
-          ]
-        }
-      ]
-    }
+              user_id: 1,
+            },
+          ],
+        },
+      ],
+    },
   },
   "/tag/important/l/latest.json": {
     users: [{ id: 1, username: "sam", avatar_template: "/images/avatar.png" }],
@@ -4011,10 +4098,10 @@ export default {
       tags: [
         {
           id: 1,
-          name: "test",
+          name: "important",
           topic_count: 2,
-          staff: false
-        }
+          staff: false,
+        },
       ],
       topics: [
         {
@@ -4055,9 +4142,9 @@ export default {
               extras: "latest single",
               description: "Original Poster, Most Recent Poster",
               user_id: 1,
-              primary_group_id: null
-            }
-          ]
+              primary_group_id: null,
+            },
+          ],
         },
         {
           id: 15,
@@ -4097,12 +4184,12 @@ export default {
               extras: "latest single",
               description: "Original Poster, Most Recent Poster",
               user_id: 1,
-              primary_group_id: null
-            }
-          ]
-        }
-      ]
-    }
+              primary_group_id: null,
+            },
+          ],
+        },
+      ],
+    },
   },
   "/c/feature/2/l/latest.json": {
     users: [
@@ -4110,17 +4197,17 @@ export default {
       {
         id: 32,
         username: "codinghorror",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 8021,
         username: "Abhishek_Gupta",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 6695,
         username: "illspirit",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2, username: "neil", avatar_template: "/images/avatar.png" },
       { id: 3124, username: "sipp11", avatar_template: "/images/avatar.png" },
@@ -4137,42 +4224,42 @@ export default {
       {
         id: 5048,
         username: "SneakySly",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 7731, username: "YOU", avatar_template: "/images/avatar.png" },
       {
         id: 7985,
         username: "onlinedev",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 3415, username: "radq", avatar_template: "/images/avatar.png" },
       {
         id: 5351,
         username: "erlend_sh",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 471,
         username: "BhaelOchon",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 7, username: "pekka", avatar_template: "/images/avatar.png" },
       {
         id: 4780,
         username: "HugoAlmeida",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 5053, username: "Blue", avatar_template: "/images/avatar.png" },
       { id: 212, username: "alxndr", avatar_template: "/images/avatar.png" },
       {
         id: 6118,
         username: "lukelarris",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 7076,
         username: "philnelson",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 4851, username: "jab", avatar_template: "/images/avatar.png" },
       { id: 4457, username: "Lee_Ars", avatar_template: "/images/avatar.png" },
@@ -4184,8 +4271,8 @@ export default {
       {
         id: 6314,
         username: "rafaelfranca",
-        avatar_template: "/images/avatar.png"
-      }
+        avatar_template: "/images/avatar.png",
+      },
     ],
     topic_list: {
       can_create_topic: false,
@@ -4221,8 +4308,12 @@ export default {
           category_id: 2,
           posters: [
             { extras: null, description: "Original Poster", user_id: 1 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11994,
@@ -4252,9 +4343,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 8021
-            }
-          ]
+              user_id: 8021,
+            },
+          ],
         },
         {
           id: 11888,
@@ -4285,11 +4376,11 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 6695
+              user_id: 6695,
             },
             { extras: null, description: "Most Posts", user_id: 32 },
-            { extras: null, description: "Frequent Poster", user_id: 2 }
-          ]
+            { extras: null, description: "Frequent Poster", user_id: 2 },
+          ],
         },
         {
           id: 9151,
@@ -4321,9 +4412,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 10911,
@@ -4331,8 +4422,7 @@ export default {
             "/users/activate-account pulling blank logo instead of defaulting to h2",
           fancy_title:
             "/users/activate-account pulling blank logo instead of defaulting to h2",
-          slug:
-            "users-activate-account-pulling-blank-logo-instead-of-defaulting-to-h2",
+          slug: "users-activate-account-pulling-blank-logo-instead-of-defaulting-to-h2",
           posts_count: 3,
           reply_count: 1,
           highest_post_number: 3,
@@ -4354,8 +4444,12 @@ export default {
           category_id: 2,
           posters: [
             { extras: null, description: "Original Poster", user_id: 7513 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 19 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 19,
+            },
+          ],
         },
         {
           id: 11937,
@@ -4384,8 +4478,8 @@ export default {
           posters: [
             { extras: null, description: "Original Poster", user_id: 3 },
             { extras: null, description: "Most Posts", user_id: 7073 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 1 }
-          ]
+            { extras: "latest", description: "Most Recent Poster", user_id: 1 },
+          ],
         },
         {
           id: 6625,
@@ -4416,9 +4510,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11225,
@@ -4449,9 +4543,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11903,
@@ -4481,12 +4575,12 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 6377
+              user_id: 6377,
             },
             { extras: null, description: "Most Posts", user_id: 1496 },
             { extras: null, description: "Frequent Poster", user_id: 1 },
-            { extras: null, description: "Frequent Poster", user_id: 19 }
-          ]
+            { extras: null, description: "Frequent Poster", user_id: 19 },
+          ],
         },
         {
           id: 11969,
@@ -4516,9 +4610,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 7995
-            }
-          ]
+              user_id: 7995,
+            },
+          ],
         },
         {
           id: 11945,
@@ -4550,9 +4644,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Frequent Poster",
-              user_id: 1995
-            }
-          ]
+              user_id: 1995,
+            },
+          ],
         },
         {
           id: 11520,
@@ -4586,9 +4680,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11597,
@@ -4596,8 +4690,7 @@ export default {
             'All categories drop down does not close after clicking on first menu "all categories"',
           fancy_title:
             "All categories drop down does not close after clicking on first menu &ldquo;all categories&rdquo;",
-          slug:
-            "all-categories-drop-down-does-not-close-after-clicking-on-first-menu-all-categories",
+          slug: "all-categories-drop-down-does-not-close-after-clicking-on-first-menu-all-categories",
           posts_count: 5,
           reply_count: 2,
           highest_post_number: 5,
@@ -4623,9 +4716,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 3415
-            }
-          ]
+              user_id: 3415,
+            },
+          ],
         },
         {
           id: 11962,
@@ -4654,8 +4747,12 @@ export default {
           category_id: 2,
           posters: [
             { extras: null, description: "Original Poster", user_id: 7073 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11831,
@@ -4686,8 +4783,12 @@ export default {
             { extras: null, description: "Most Posts", user_id: 1 },
             { extras: null, description: "Frequent Poster", user_id: 471 },
             { extras: null, description: "Frequent Poster", user_id: 32 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 19 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 19,
+            },
+          ],
         },
         {
           id: 11916,
@@ -4718,9 +4819,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 1995
-            }
-          ]
+              user_id: 1995,
+            },
+          ],
         },
         {
           id: 10425,
@@ -4751,9 +4852,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 7
-            }
-          ]
+              user_id: 7,
+            },
+          ],
         },
         {
           id: 6557,
@@ -4783,8 +4884,8 @@ export default {
             { extras: null, description: "Original Poster", user_id: 4780 },
             { extras: null, description: "Most Posts", user_id: 5053 },
             { extras: null, description: "Frequent Poster", user_id: 32 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 2 }
-          ]
+            { extras: "latest", description: "Most Recent Poster", user_id: 2 },
+          ],
         },
         {
           id: 11944,
@@ -4815,9 +4916,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 1995
-            }
-          ]
+              user_id: 1995,
+            },
+          ],
         },
         {
           id: 10462,
@@ -4845,8 +4946,12 @@ export default {
           category_id: 2,
           posters: [
             { extras: null, description: "Original Poster", user_id: 6695 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11932,
@@ -4874,8 +4979,12 @@ export default {
           category_id: 2,
           posters: [
             { extras: null, description: "Original Poster", user_id: 6626 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 10357,
@@ -4910,9 +5019,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 10114,
@@ -4942,8 +5051,12 @@ export default {
             { extras: null, description: "Original Poster", user_id: 1 },
             { extras: null, description: "Most Posts", user_id: 7076 },
             { extras: null, description: "Frequent Poster", user_id: 2 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 6330,
@@ -4973,8 +5086,12 @@ export default {
           posters: [
             { extras: null, description: "Original Poster", user_id: 4851 },
             { extras: null, description: "Most Posts", user_id: 2 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 8367,
@@ -5006,8 +5123,12 @@ export default {
             { extras: null, description: "Most Posts", user_id: 6280 },
             { extras: null, description: "Frequent Poster", user_id: 3681 },
             { extras: null, description: "Frequent Poster", user_id: 1621 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 8815,
@@ -5041,9 +5162,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Frequent Poster",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11371,
@@ -5074,8 +5195,8 @@ export default {
             { extras: null, description: "Most Posts", user_id: 19 },
             { extras: null, description: "Frequent Poster", user_id: 6314 },
             { extras: null, description: "Frequent Poster", user_id: 32 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 1 }
-          ]
+            { extras: "latest", description: "Most Recent Poster", user_id: 1 },
+          ],
         },
         {
           id: 9908,
@@ -5104,8 +5225,12 @@ export default {
           posters: [
             { extras: null, description: "Original Poster", user_id: 5351 },
             { extras: null, description: "Most Posts", user_id: 471 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 6134,
@@ -5113,8 +5238,7 @@ export default {
             "Unread topic is stuck as unread after insertion of staff message",
           fancy_title:
             "Unread topic is stuck as unread after insertion of staff message",
-          slug:
-            "unread-topic-is-stuck-as-unread-after-insertion-of-staff-message",
+          slug: "unread-topic-is-stuck-as-unread-after-insertion-of-staff-message",
           posts_count: 5,
           reply_count: 1,
           highest_post_number: 5,
@@ -5138,8 +5262,12 @@ export default {
           posters: [
             { extras: null, description: "Original Poster", user_id: 3681 },
             { extras: null, description: "Most Posts", user_id: 5351 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11914,
@@ -5169,12 +5297,12 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 1
-            }
-          ]
-        }
-      ]
-    }
+              user_id: 1,
+            },
+          ],
+        },
+      ],
+    },
   },
   "/c/dev/7/l/latest.json": {
     users: [
@@ -5182,17 +5310,17 @@ export default {
       {
         id: 32,
         username: "codinghorror",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 8021,
         username: "Abhishek_Gupta",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 6695,
         username: "illspirit",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 2, username: "neil", avatar_template: "/images/avatar.png" },
       { id: 3124, username: "sipp11", avatar_template: "/images/avatar.png" },
@@ -5209,42 +5337,42 @@ export default {
       {
         id: 5048,
         username: "SneakySly",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 7731, username: "YOU", avatar_template: "/images/avatar.png" },
       {
         id: 7985,
         username: "onlinedev",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 3415, username: "radq", avatar_template: "/images/avatar.png" },
       {
         id: 5351,
         username: "erlend_sh",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 471,
         username: "BhaelOchon",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 7, username: "pekka", avatar_template: "/images/avatar.png" },
       {
         id: 4780,
         username: "HugoAlmeida",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 5053, username: "Blue", avatar_template: "/images/avatar.png" },
       { id: 212, username: "alxndr", avatar_template: "/images/avatar.png" },
       {
         id: 6118,
         username: "lukelarris",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       {
         id: 7076,
         username: "philnelson",
-        avatar_template: "/images/avatar.png"
+        avatar_template: "/images/avatar.png",
       },
       { id: 4851, username: "jab", avatar_template: "/images/avatar.png" },
       { id: 4457, username: "Lee_Ars", avatar_template: "/images/avatar.png" },
@@ -5256,8 +5384,8 @@ export default {
       {
         id: 6314,
         username: "rafaelfranca",
-        avatar_template: "/images/avatar.png"
-      }
+        avatar_template: "/images/avatar.png",
+      },
     ],
     topic_list: {
       can_create_topic: false,
@@ -5293,8 +5421,12 @@ export default {
           category_id: 7,
           posters: [
             { extras: null, description: "Original Poster", user_id: 1 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11994,
@@ -5325,9 +5457,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 8021
-            }
-          ]
+              user_id: 8021,
+            },
+          ],
         },
         {
           id: 11888,
@@ -5358,11 +5490,11 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 6695
+              user_id: 6695,
             },
             { extras: null, description: "Most Posts", user_id: 32 },
-            { extras: null, description: "Frequent Poster", user_id: 2 }
-          ]
+            { extras: null, description: "Frequent Poster", user_id: 2 },
+          ],
         },
         {
           id: 9151,
@@ -5394,9 +5526,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 10911,
@@ -5404,8 +5536,7 @@ export default {
             "/users/activate-account pulling blank logo instead of defaulting to h2",
           fancy_title:
             "/users/activate-account pulling blank logo instead of defaulting to h2",
-          slug:
-            "users-activate-account-pulling-blank-logo-instead-of-defaulting-to-h2",
+          slug: "users-activate-account-pulling-blank-logo-instead-of-defaulting-to-h2",
           posts_count: 3,
           reply_count: 1,
           highest_post_number: 3,
@@ -5427,8 +5558,12 @@ export default {
           category_id: 7,
           posters: [
             { extras: null, description: "Original Poster", user_id: 7513 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 19 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 19,
+            },
+          ],
         },
         {
           id: 11937,
@@ -5457,8 +5592,8 @@ export default {
           posters: [
             { extras: null, description: "Original Poster", user_id: 3 },
             { extras: null, description: "Most Posts", user_id: 7073 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 1 }
-          ]
+            { extras: "latest", description: "Most Recent Poster", user_id: 1 },
+          ],
         },
         {
           id: 6625,
@@ -5489,9 +5624,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11225,
@@ -5522,9 +5657,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11903,
@@ -5554,12 +5689,12 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 6377
+              user_id: 6377,
             },
             { extras: null, description: "Most Posts", user_id: 1496 },
             { extras: null, description: "Frequent Poster", user_id: 1 },
-            { extras: null, description: "Frequent Poster", user_id: 19 }
-          ]
+            { extras: null, description: "Frequent Poster", user_id: 19 },
+          ],
         },
         {
           id: 11969,
@@ -5589,9 +5724,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 7995
-            }
-          ]
+              user_id: 7995,
+            },
+          ],
         },
         {
           id: 11945,
@@ -5623,9 +5758,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Frequent Poster",
-              user_id: 1995
-            }
-          ]
+              user_id: 1995,
+            },
+          ],
         },
         {
           id: 11520,
@@ -5659,9 +5794,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11597,
@@ -5669,8 +5804,7 @@ export default {
             'All categories drop down does not close after clicking on first menu "all categories"',
           fancy_title:
             "All categories drop down does not close after clicking on first menu &ldquo;all categories&rdquo;",
-          slug:
-            "all-categories-drop-down-does-not-close-after-clicking-on-first-menu-all-categories",
+          slug: "all-categories-drop-down-does-not-close-after-clicking-on-first-menu-all-categories",
           posts_count: 5,
           reply_count: 2,
           highest_post_number: 5,
@@ -5696,9 +5830,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 3415
-            }
-          ]
+              user_id: 3415,
+            },
+          ],
         },
         {
           id: 11962,
@@ -5727,8 +5861,12 @@ export default {
           category_id: 7,
           posters: [
             { extras: null, description: "Original Poster", user_id: 7073 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11831,
@@ -5759,8 +5897,12 @@ export default {
             { extras: null, description: "Most Posts", user_id: 1 },
             { extras: null, description: "Frequent Poster", user_id: 471 },
             { extras: null, description: "Frequent Poster", user_id: 32 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 19 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 19,
+            },
+          ],
         },
         {
           id: 11916,
@@ -5791,9 +5933,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster",
-              user_id: 1995
-            }
-          ]
+              user_id: 1995,
+            },
+          ],
         },
         {
           id: 10425,
@@ -5824,9 +5966,9 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 7
-            }
-          ]
+              user_id: 7,
+            },
+          ],
         },
         {
           id: 6557,
@@ -5856,8 +5998,8 @@ export default {
             { extras: null, description: "Original Poster", user_id: 4780 },
             { extras: null, description: "Most Posts", user_id: 5053 },
             { extras: null, description: "Frequent Poster", user_id: 32 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 2 }
-          ]
+            { extras: "latest", description: "Most Recent Poster", user_id: 2 },
+          ],
         },
         {
           id: 11944,
@@ -5888,9 +6030,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 1995
-            }
-          ]
+              user_id: 1995,
+            },
+          ],
         },
         {
           id: 10462,
@@ -5918,8 +6060,12 @@ export default {
           category_id: 7,
           posters: [
             { extras: null, description: "Original Poster", user_id: 6695 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11932,
@@ -5947,8 +6093,12 @@ export default {
           category_id: 7,
           posters: [
             { extras: null, description: "Original Poster", user_id: 6626 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 10357,
@@ -5983,9 +6133,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Most Posts",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 10114,
@@ -6015,8 +6165,12 @@ export default {
             { extras: null, description: "Original Poster", user_id: 1 },
             { extras: null, description: "Most Posts", user_id: 7076 },
             { extras: null, description: "Frequent Poster", user_id: 2 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 6330,
@@ -6046,8 +6200,12 @@ export default {
           posters: [
             { extras: null, description: "Original Poster", user_id: 4851 },
             { extras: null, description: "Most Posts", user_id: 2 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 8367,
@@ -6079,8 +6237,12 @@ export default {
             { extras: null, description: "Most Posts", user_id: 6280 },
             { extras: null, description: "Frequent Poster", user_id: 3681 },
             { extras: null, description: "Frequent Poster", user_id: 1621 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 8815,
@@ -6114,9 +6276,9 @@ export default {
             {
               extras: "latest",
               description: "Most Recent Poster, Frequent Poster",
-              user_id: 32
-            }
-          ]
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11371,
@@ -6147,8 +6309,8 @@ export default {
             { extras: null, description: "Most Posts", user_id: 19 },
             { extras: null, description: "Frequent Poster", user_id: 6314 },
             { extras: null, description: "Frequent Poster", user_id: 32 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 1 }
-          ]
+            { extras: "latest", description: "Most Recent Poster", user_id: 1 },
+          ],
         },
         {
           id: 9908,
@@ -6177,8 +6339,12 @@ export default {
           posters: [
             { extras: null, description: "Original Poster", user_id: 5351 },
             { extras: null, description: "Most Posts", user_id: 471 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 6134,
@@ -6186,8 +6352,7 @@ export default {
             "Unread topic is stuck as unread after insertion of staff message",
           fancy_title:
             "Unread topic is stuck as unread after insertion of staff message",
-          slug:
-            "unread-topic-is-stuck-as-unread-after-insertion-of-staff-message",
+          slug: "unread-topic-is-stuck-as-unread-after-insertion-of-staff-message",
           posts_count: 5,
           reply_count: 1,
           highest_post_number: 5,
@@ -6211,8 +6376,12 @@ export default {
           posters: [
             { extras: null, description: "Original Poster", user_id: 3681 },
             { extras: null, description: "Most Posts", user_id: 5351 },
-            { extras: "latest", description: "Most Recent Poster", user_id: 32 }
-          ]
+            {
+              extras: "latest",
+              description: "Most Recent Poster",
+              user_id: 32,
+            },
+          ],
         },
         {
           id: 11914,
@@ -6242,12 +6411,12 @@ export default {
             {
               extras: "latest",
               description: "Original Poster, Most Recent Poster",
-              user_id: 1
-            }
-          ]
-        }
-      ]
-    }
+              user_id: 1,
+            },
+          ],
+        },
+      ],
+    },
   },
   "/categories_and_latest.json": {
     category_list: {
@@ -6282,7 +6451,7 @@ export default {
           topics_all_time: 1,
           description_excerpt:
             "Topics that don&#39;t need a category, or don&#39;t fit into any other existing category.",
-          is_uncategorized: true
+          is_uncategorized: true,
         },
         {
           id: 3,
@@ -6310,9 +6479,9 @@ export default {
           topics_year: 0,
           topics_all_time: 0,
           description_excerpt:
-            "Discussion about this site, its organization, how it works, and how we can improve it."
-        }
-      ]
+            "Discussion about this site, its organization, how it works, and how we can improve it.",
+        },
+      ],
     },
     topic_list: {
       can_create_topic: false,
@@ -6355,12 +6524,12 @@ export default {
             {
               extras: "latest single",
               description: "Original Poster, Most Recent Poster",
-              user_id: -1
-            }
-          ]
-        }
-      ]
-    }
+              user_id: -1,
+            },
+          ],
+        },
+      ],
+    },
   },
   "/latest_can_create_topic.json": {
     users: [
@@ -6368,8 +6537,8 @@ export default {
         id: 1,
         username: "tt1",
         name: null,
-        avatar_template: "/letter_avatar_proxy/v4/letter/t/6de8d8/{size}.png"
-      }
+        avatar_template: "/letter_avatar_proxy/v4/letter/t/6de8d8/{size}.png",
+      },
     ],
     primary_groups: [],
     topic_list: {
@@ -6405,7 +6574,10 @@ export default {
           bookmarked: false,
           liked: false,
           tags: ["test", "test-tag"],
-          tags_description: { test: "test description", "test-tag": "test tag description" },
+          tags_description: {
+            test: "test description",
+            "test-tag": "test tag description",
+          },
           views: 6,
           like_count: 0,
           has_summary: false,
@@ -6418,9 +6590,9 @@ export default {
               extras: "latest single",
               description: "Original Poster, Most Recent Poster",
               user_id: 1,
-              primary_group_id: null
-            }
-          ]
+              primary_group_id: null,
+            },
+          ],
         },
         {
           id: 29,
@@ -6457,11 +6629,11 @@ export default {
               extras: "latest single",
               description: "Original Poster, Most Recent Poster",
               user_id: 1,
-              primary_group_id: null
-            }
-          ]
-        }
-      ]
-    }
-  }
+              primary_group_id: null,
+            },
+          ],
+        },
+      ],
+    },
+  },
 };

@@ -1,28 +1,23 @@
-import Service from "@ember/service";
-import EmberObject, { computed, defineProperty } from "@ember/object";
-import { readOnly } from "@ember/object/computed";
-import { ajax } from "discourse/lib/ajax";
-import {
-  cancel,
-  debounce,
-  later,
-  next,
-  once,
-  run,
-  throttle,
-} from "@ember/runloop";
-import Session from "discourse/models/session";
+import EmberObject, { computed } from "@ember/object";
+import { dependentKeyCompat } from "@ember/object/compat";
+import Evented from "@ember/object/evented";
+import { cancel, debounce, next, once, throttle } from "@ember/runloop";
+import Service, { service } from "@ember/service";
 import { Promise } from "rsvp";
-import { isLegacyEmber, isTesting } from "discourse-common/config/environment";
-import User from "discourse/models/user";
+import { ajax } from "discourse/lib/ajax";
+import { bind } from "discourse/lib/decorators";
+import { isTesting } from "discourse/lib/environment";
+import getURL from "discourse/lib/get-url";
+import { disableImplicitInjections } from "discourse/lib/implicit-injections";
+import discourseLater from "discourse/lib/later";
 import userPresent, {
   onPresenceChange,
   removeOnPresenceChange,
 } from "discourse/lib/user-presence";
-import { bind } from "discourse-common/utils/decorators";
+import User from "discourse/models/user";
 
 const PRESENCE_INTERVAL_S = 30;
-const PRESENCE_DEBOUNCE_MS = isTesting() ? 0 : 500;
+const DEFAULT_PRESENCE_DEBOUNCE_MS = isTesting() ? 0 : 500;
 const PRESENCE_THROTTLE_MS = isTesting() ? 0 : 1000;
 
 const PRESENCE_GET_RETRY_MS = 5000;
@@ -45,17 +40,12 @@ export class PresenceChannelNotFound extends Error {}
 
 // Instances of this class are handed out to consumers. They act as
 // convenient proxies to the PresenceService and PresenceServiceState
-class PresenceChannel extends EmberObject {
+// The 'change' event is fired whenever the users list or the count change
+class PresenceChannel extends EmberObject.extend(Evented) {
   init({ name, presenceService }) {
     super.init(...arguments);
     this.name = name;
     this.presenceService = presenceService;
-    defineProperty(
-      this,
-      "_presenceState",
-      readOnly(`presenceService._presenceChannelStates.${name}`)
-    );
-
     this.set("present", false);
     this.set("subscribed", false);
   }
@@ -77,22 +67,30 @@ class PresenceChannel extends EmberObject {
     }
 
     this.setProperties({ activeOptions });
-    await this.presenceService._enter(this);
-    this.set("present", true);
+    if (!this.present) {
+      this.set("present", true);
+      await this.presenceService._enter(this);
+    }
   }
 
   // Mark the current user as leaving this channel
   async leave() {
-    await this.presenceService._leave(this);
-    this.set("present", false);
+    if (this.present) {
+      this.set("present", false);
+      await this.presenceService._leave(this);
+    }
   }
 
   async subscribe(initialData = null) {
     if (this.subscribed) {
       return;
     }
-    await this.presenceService._subscribe(this, initialData);
+    const state = await this.presenceService._subscribe(this, initialData);
     this.set("subscribed", true);
+    this.set("_presenceState", state);
+
+    this._publishChange();
+    state.on("change", this._publishChange);
   }
 
   async unsubscribe() {
@@ -101,14 +99,21 @@ class PresenceChannel extends EmberObject {
     }
     await this.presenceService._unsubscribe(this);
     this.set("subscribed", false);
+    this._presenceState.off("change", this._publishChange);
+    this.set("_presenceState", null);
+    this._publishChange();
   }
 
-  @computed("_presenceState.users", "subscribed")
+  @bind
+  _publishChange() {
+    this.trigger("change", this);
+  }
+
+  @dependentKeyCompat
   get users() {
-    if (!this.subscribed) {
-      return;
+    if (this.get("subscribed")) {
+      return this.get("_presenceState.users");
     }
-    return this._presenceState.users;
   }
 
   @computed("_presenceState.count", "subscribed")
@@ -116,7 +121,7 @@ class PresenceChannel extends EmberObject {
     if (!this.subscribed) {
       return;
     }
-    return this._presenceState.count;
+    return this._presenceState?.count;
   }
 
   @computed("_presenceState.count", "subscribed")
@@ -124,11 +129,11 @@ class PresenceChannel extends EmberObject {
     if (!this.subscribed) {
       return;
     }
-    return this._presenceState.countOnly;
+    return this._presenceState?.countOnly;
   }
 }
 
-class PresenceChannelState extends EmberObject {
+class PresenceChannelState extends EmberObject.extend(Evented) {
   init({ name, presenceService }) {
     super.init(...arguments);
     this.name = name;
@@ -170,15 +175,14 @@ class PresenceChannelState extends EmberObject {
 
     this.lastSeenId = initialData.last_message_id;
 
-    let callback = (data, global_id, message_id) =>
-      run(() => this._processMessage(data, global_id, message_id));
     this.presenceService.messageBus.subscribe(
       `/presence${this.name}`,
-      callback,
+      this._processMessage,
       this.lastSeenId
     );
 
-    this.set("_subscribedCallback", callback);
+    this.set("_subscribedCallback", this._processMessage);
+    this.trigger("change");
   }
 
   // Stop subscribing to updates from the server about this channel
@@ -191,17 +195,16 @@ class PresenceChannelState extends EmberObject {
       this.set("_subscribedCallback", null);
       this.set("users", null);
       this.set("count", null);
+      this.trigger("change");
     }
   }
 
   async _resubscribe() {
     this.unsubscribe();
-    // Stored at object level for tests to hook in
-    this._resubscribePromise = this.subscribe();
-    await this._resubscribePromise;
-    delete this._resubscribePromise;
+    await this.subscribe();
   }
 
+  @bind
   async _processMessage(data, global_id, message_id) {
     if (message_id !== this.lastSeenId + 1) {
       // eslint-disable-next-line no-console
@@ -215,12 +218,13 @@ class PresenceChannelState extends EmberObject {
 
       await this._resubscribe();
       return;
-    } else {
-      this.lastSeenId = message_id;
     }
+
+    this.lastSeenId = message_id;
 
     if (this.countOnly && data.count_delta !== undefined) {
       this.set("count", this.count + data.count_delta);
+      this.trigger("change");
     } else if (
       !this.countOnly &&
       (data.entering_users || data.leaving_user_ids)
@@ -229,12 +233,15 @@ class PresenceChannelState extends EmberObject {
         const users = data.entering_users.map((u) => User.create(u));
         this.users.addObjects(users);
       }
+
       if (data.leaving_user_ids) {
         const leavingIds = new Set(data.leaving_user_ids);
         const toRemove = this.users.filter((u) => leavingIds.has(u.id));
         this.users.removeObjects(toRemove);
       }
+
       this.set("count", this.users.length);
+      this.trigger("change");
     } else {
       // Unexpected message
       await this._resubscribe();
@@ -243,14 +250,23 @@ class PresenceChannelState extends EmberObject {
   }
 }
 
+@disableImplicitInjections
 export default class PresenceService extends Service {
+  @service currentUser;
+  @service messageBus;
+  @service session;
+  @service siteSettings;
+
+  _presenceDebounceMs = DEFAULT_PRESENCE_DEBOUNCE_MS;
+
   init() {
     super.init(...arguments);
     this._queuedEvents = [];
-    this._presenceChannelStates = EmberObject.create();
+    this._presenceChannelStates = new Map();
     this._presentProxies = new Map();
     this._subscribedProxies = new Map();
     this._initialDataRequests = new Map();
+    this._previousPresentButInactiveChannels = new Set();
 
     if (this.currentUser) {
       window.addEventListener("beforeunload", this._beaconLeaveAll);
@@ -261,14 +277,15 @@ export default class PresenceService extends Service {
     }
   }
 
-  get _presentChannels() {
-    return new Set(this._presentProxies.keys());
-  }
-
   willDestroy() {
     super.willDestroy(...arguments);
     window.removeEventListener("beforeunload", this._beaconLeaveAll);
     removeOnPresenceChange(this._throttledUpdateServer);
+    cancel(this._debounceTimer);
+  }
+
+  get _presentChannels() {
+    return new Set(this._presentProxies.keys());
   }
 
   // Get a PresenceChannel object representing a single channel
@@ -282,9 +299,8 @@ export default class PresenceService extends Service {
   _getInitialData(channelName) {
     let promiseProxy = this._initialDataRequests[channelName];
     if (!promiseProxy) {
-      promiseProxy = this._initialDataRequests[
-        channelName
-      ] = createPromiseProxy();
+      promiseProxy = this._initialDataRequests[channelName] =
+        createPromiseProxy();
     }
 
     once(this, this._makeInitialDataRequest);
@@ -314,7 +330,7 @@ export default class PresenceService extends Service {
     try {
       result = await this._initialDataAjax;
     } catch (e) {
-      later(this, this._makeInitialDataRequest, PRESENCE_GET_RETRY_MS);
+      discourseLater(this, this._makeInitialDataRequest, PRESENCE_GET_RETRY_MS);
       throw e;
     } finally {
       this._initialDataAjax = null;
@@ -429,7 +445,7 @@ export default class PresenceService extends Service {
 
     this._addSubscribed(channelProxy);
     const channelName = channelProxy.name;
-    let state = this._presenceChannelStates[channelName];
+    let state = this._presenceChannelStates.get(channelName);
     if (!state) {
       state = PresenceChannelState.create({
         name: channelName,
@@ -438,14 +454,15 @@ export default class PresenceService extends Service {
       this._presenceChannelStates.set(channelName, state);
       await state.subscribe(initialData);
     }
+    return state;
   }
 
   _unsubscribe(channelProxy) {
     const subscribedCount = this._removeSubscribed(channelProxy);
     if (subscribedCount === 0) {
       const channelName = channelProxy.name;
-      this._presenceChannelStates[channelName].unsubscribe();
-      this._presenceChannelStates.set(channelName, undefined);
+      this._presenceChannelStates.get(channelName).unsubscribe();
+      this._presenceChannelStates.delete(channelName);
     }
   }
 
@@ -469,8 +486,8 @@ export default class PresenceService extends Service {
     data.append("client_id", this.messageBus.clientId);
     channelsToLeave.forEach((ch) => data.append("leave_channels[]", ch));
 
-    data.append("authenticity_token", Session.currentProp("csrfToken"));
-    navigator.sendBeacon("/presence/update", data);
+    data.append("authenticity_token", this.session.csrfToken);
+    navigator.sendBeacon(getURL("/presence/update"), data);
   }
 
   _dedupQueue() {
@@ -485,6 +502,10 @@ export default class PresenceService extends Service {
   }
 
   async _updateServer() {
+    if (this.isDestroying || this.isDestroyed) {
+      return;
+    }
+
     this._lastUpdate = new Date();
     this._updateRunning = true;
 
@@ -496,6 +517,7 @@ export default class PresenceService extends Service {
 
     try {
       const presentChannels = [];
+      const presentButInactiveChannels = new Set();
       const channelsToLeave = queue
         .filter((e) => e.type === "leave")
         .map((e) => e.channel);
@@ -508,11 +530,19 @@ export default class PresenceService extends Service {
         ) {
           presentChannels.push(channelName);
         } else {
-          channelsToLeave.push(channelName);
+          presentButInactiveChannels.add(channelName);
+          if (!this._previousPresentButInactiveChannels.has(channelName)) {
+            channelsToLeave.push(channelName);
+          }
         }
       }
+      this._previousPresentButInactiveChannels = presentButInactiveChannels;
 
-      if (queue.length === 0 && presentChannels.length === 0) {
+      if (
+        queue.length === 0 &&
+        presentChannels.length === 0 &&
+        channelsToLeave.length === 0
+      ) {
         return;
       }
 
@@ -536,19 +566,21 @@ export default class PresenceService extends Service {
           e.promiseProxy.resolve();
         }
       });
-    } catch (e) {
-      if (e.jqXHR?.status === 403 && isTesting() && isLegacyEmber()) {
-        // Legacy testing environment will remove the User.current() value before disposing of controllers/components.
-        // Presence often involves making HTTP calls during disposal of components, so this can cause issues.
-        // Modern Ember-CLI environment does not require this hack
-        return;
-      }
 
+      this._presenceDebounceMs = DEFAULT_PRESENCE_DEBOUNCE_MS;
+    } catch (e) {
       // Put the failed events back in the queue for next time
       this._queuedEvents.unshift(...queue);
       if (e.jqXHR?.status === 429) {
-        // Rate limited. No need to raise, we'll try again later
+        // Rate limited
+        const waitSeconds = e.jqXHR.responseJSON?.extras?.wait_seconds || 10;
+        this._presenceDebounceMs = waitSeconds * 1000;
       } else {
+        // Other error, exponential backoff capped at 30 seconds
+        this._presenceDebounceMs = Math.min(
+          this._presenceDebounceMs * 2,
+          PRESENCE_INTERVAL_S * 1000
+        );
         throw e;
       }
     } finally {
@@ -563,6 +595,10 @@ export default class PresenceService extends Service {
   // drop back to the last event via the regular throttle function.
   @bind
   _throttledUpdateServer() {
+    if (this.isDestroying || this.isDestroyed) {
+      return;
+    }
+
     if (
       !this._lastUpdate ||
       new Date() - this._lastUpdate > PRESENCE_THROTTLE_MS
@@ -585,13 +621,18 @@ export default class PresenceService extends Service {
       return;
     } else if (this._queuedEvents.length > 0) {
       this._cancelTimer();
-      debounce(this, this._throttledUpdateServer, PRESENCE_DEBOUNCE_MS);
+      cancel(this._debounceTimer);
+      this._debounceTimer = debounce(
+        this,
+        this._throttledUpdateServer,
+        this._presenceDebounceMs
+      );
     } else if (
       !this._nextUpdateTimer &&
-      this._presentChannels.length > 0 &&
+      this._presentChannels.size > 0 &&
       !isTesting()
     ) {
-      this._nextUpdateTimer = later(
+      this._nextUpdateTimer = discourseLater(
         this,
         this._throttledUpdateServer,
         PRESENCE_INTERVAL_S * 1000

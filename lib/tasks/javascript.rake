@@ -17,10 +17,11 @@ def library_src
 end
 
 def html_for_section(group)
-  icons = group["icons"].map do |icon|
-    class_attr = icon["diversity"] ? " class=\"diversity\"" : ""
-    "    {{replace-emoji \":#{icon['name']}:\" (hash lazy=true#{class_attr})}}"
-  end
+  icons =
+    group["icons"].map do |icon|
+      class_attr = icon["diversity"] ? " class=\"diversity\"" : ""
+      "    {{replace-emoji \":#{icon["name"]}:\" (hash lazy=true#{class_attr} tabIndex=\"0\")}}"
+    end
 
   <<~HTML
     <div class="section" data-section="#{group["name"]}">
@@ -45,7 +46,7 @@ def write_template(path, task_name, template)
 
   File.write(output_path, "#{header}\n\n#{template}")
   puts "#{basename} created"
-  %x{yarn run prettier --write #{output_path}}
+  system("pnpm prettier --write #{output_path}", exception: true)
   puts "#{basename} prettified"
 end
 
@@ -58,166 +59,119 @@ def write_hbs_template(path, task_name, template)
   basename = File.basename(path)
   output_path = "#{Rails.root}/app/assets/javascripts/#{path}"
   File.write(output_path, "#{header}\n#{template}")
+  system("pnpm prettier --write #{output_path}", exception: true)
   puts "#{basename} created"
 end
 
 def dependencies
   [
+    { source: "chart.js/dist/chart.min.js", public: true },
+    { source: "chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.min.js", public: true },
+    { source: "magnific-popup/dist/jquery.magnific-popup.min.js", public: true },
+    { source: "pikaday/pikaday.js", public: true },
+    { source: "moment/moment.js" },
+    { source: "moment/locale/.", destination: "moment-locale" },
     {
-      source: 'bootstrap/js/modal.js',
-      destination: 'bootstrap-modal.js'
-    }, {
-      source: 'ace-builds/src-min-noconflict/ace.js',
-      destination: 'ace.js',
-      public: true
-    }, {
-      source: '@json-editor/json-editor/dist/jsoneditor.js',
-      package_name: '@json-editor/json-editor',
-      public: true
-    }, {
-      source: 'chart.js/dist/Chart.min.js',
-      public: true
-    }, {
-      source: 'chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.min.js',
-      public: true
-    }, {
-      source: 'diffhtml/dist/diffhtml.min.js',
-      public: true
-    }, {
-      source: 'magnific-popup/dist/jquery.magnific-popup.min.js',
-      public: true
-    }, {
-      source: 'pikaday/pikaday.js',
-      public: true
-    }, {
-      source: 'handlebars/dist/handlebars.js'
-    }, {
-      source: 'handlebars/dist/handlebars.runtime.js'
-    }, {
-      source: '@highlightjs/cdn-assets/.',
-      destination: 'highlightjs'
-    }, {
-      source: 'jquery/dist/jquery.js'
-    }, {
-      source: 'markdown-it/dist/markdown-it.js'
-    }, {
-      source: '@discourse/itsatrap/itsatrap.js'
-    }, {
-      source: 'moment/moment.js'
-    }, {
-      source: 'moment/locale/.',
-      destination: 'moment-locale',
-    }, {
-      source: 'moment-timezone/builds/moment-timezone-with-data-10-year-range.js',
-      destination: 'moment-timezone-with-data.js'
-    }, {
-      source: '@discourse/moment-timezone-names-translations/locales/.',
-      destination: 'moment-timezone-names-locale'
-    }, {
-      source: 'workbox-sw/build/.',
-      destination: 'workbox',
+      source: "moment-timezone/builds/moment-timezone-with-data-10-year-range.js",
+      destination: "moment-timezone-with-data.js",
+    },
+    {
+      source: "@discourse/moment-timezone-names-translations/locales/.",
+      destination: "moment-timezone-names-locale",
+    },
+    {
+      source: "squoosh/codecs/mozjpeg/enc/mozjpeg_enc.js",
+      destination: "squoosh",
       public: true,
-      skip_versioning: true
-    }, {
-      source: 'workbox-routing/build/.',
-      destination: 'workbox',
-      public: true,
-      skip_versioning: true
-    }, {
-      source: 'workbox-core/build/.',
-      destination: 'workbox',
-      public: true,
-      skip_versioning: true
-    }, {
-      source: 'workbox-strategies/build/.',
-      destination: 'workbox',
-      public: true,
-      skip_versioning: true
-    }, {
-      source: 'workbox-expiration/build/.',
-      destination: 'workbox',
-      public: true,
-      skip_versioning: true
-    }, {
-      source: 'workbox-cacheable-response/build/.',
-      destination: 'workbox',
       skip_versioning: true,
-      public: true
-    }, {
-      source: '@popperjs/core/dist/umd/popper.js'
-    }, {
-      source: '@popperjs/core/dist/umd/popper.js.map',
-      public_root: true
     },
     {
-      source: 'route-recognizer/dist/route-recognizer.js'
-    }, {
-      source: 'route-recognizer/dist/route-recognizer.js.map',
-      public_root: true
-    },
-    {
-      source: 'qunit/qunit/qunit.js'
-    },
-    {
-      source: 'pretender/dist/pretender.js'
-    },
-    {
-      source: 'fake-xml-http-request/fake_xml_http_request.js'
-    },
-    {
-      source: 'sinon/pkg/sinon.js'
-    },
-    {
-      source: 'squoosh/codecs/mozjpeg/enc/mozjpeg_enc.js',
-      destination: 'squoosh',
+      source: "squoosh/codecs/mozjpeg/enc/mozjpeg_enc.wasm",
+      destination: "squoosh",
       public: true,
-      skip_versioning: true
+      skip_versioning: true,
     },
     {
-      source: 'squoosh/codecs/mozjpeg/enc/mozjpeg_enc.wasm',
-      destination: 'squoosh',
+      source: "squoosh/codecs/resize/pkg/squoosh_resize.js",
+      destination: "squoosh",
       public: true,
-      skip_versioning: true
+      skip_versioning: true,
     },
     {
-      source: 'squoosh/codecs/resize/pkg/squoosh_resize.js',
-      destination: 'squoosh',
+      source: "squoosh/codecs/resize/pkg/squoosh_resize_bg.wasm",
+      destination: "squoosh",
       public: true,
-      skip_versioning: true
+      skip_versioning: true,
     },
-    {
-      source: 'squoosh/codecs/resize/pkg/squoosh_resize_bg.wasm',
-      destination: 'squoosh',
-      public: true,
-      skip_versioning: true
-    },
-    {
-      source: 'custom-uppy-build.js',
-      destination: 'uppy.js'
-    }
   ]
 end
 
 def node_package_name(f)
-  f[:package_name] || f[:source].split('/').first
+  f[:package_name] || f[:source].split("/").first
 end
 
 def public_path_name(f)
   f[:destination] || node_package_name(f)
 end
 
-task 'javascript:update_constants' => :environment do
-  task_name = 'update_constants'
+def absolute_sourcemap(dest)
+  File.open(dest) do |file|
+    contents = file.read
+    contents.gsub!(/sourceMappingURL=(.*)/, 'sourceMappingURL=/\1')
+    File.open(dest, "w+") { |d| d.write(contents) }
+  end
+end
+
+task "javascript:update_constants" => :environment do
+  task_name = "update_constants"
+
+  auto_groups =
+    Group::AUTO_GROUPS.inject({}) do |result, (group_name, group_id)|
+      result.merge(
+        group_name => {
+          id: group_id,
+          automatic: true,
+          name: group_name,
+          display_name: group_name,
+        },
+      )
+    end
 
   write_template("discourse/app/lib/constants.js", task_name, <<~JS)
     export const SEARCH_PRIORITIES = #{Searchable::PRIORITIES.to_json};
 
     export const SEARCH_PHRASE_REGEXP = '#{Search::PHRASE_MATCH_REGEXP_PATTERN}';
+
+    export const SIDEBAR_URL = {
+      max_icon_length: #{SidebarUrl::MAX_ICON_LENGTH},
+      max_name_length: #{SidebarUrl::MAX_NAME_LENGTH},
+      max_value_length: #{SidebarUrl::MAX_VALUE_LENGTH}
+    }
+
+    export const SIDEBAR_SECTION = {
+      max_title_length: #{SidebarSection::MAX_TITLE_LENGTH},
+    }
+
+    export const AUTO_GROUPS = #{auto_groups.to_json};
+
+    export const GROUP_SMTP_SSL_MODES = #{Group.smtp_ssl_modes.to_json};
+
+    export const MAX_NOTIFICATIONS_LIMIT_PARAMS = #{NotificationsController::INDEX_LIMIT};
+
+    export const TOPIC_VISIBILITY_REASONS = #{Topic.visibility_reasons.to_json};
+
+    export const SYSTEM_FLAG_IDS = #{PostActionType.types.to_json};
+
+    export const SITE_SETTING_REQUIRES_CONFIRMATION_TYPES = #{SiteSettings::TypeSupervisor::REQUIRES_CONFIRMATION_TYPES.to_json};
+
+    export const MAX_UNOPTIMIZED_CATEGORIES = #{CategoryList::MAX_UNOPTIMIZED_CATEGORIES};
+
+    export const USER_FIELD_FLAGS = #{UserField::FLAG_ATTRIBUTES};
+
+    export const REPORT_MODES = #{Report::MODES.to_json};
   JS
 
-  pretty_notifications = Notification.types.map do |n|
-    "  #{n[0]}: #{n[1]},"
-  end.join("\n")
+  pretty_notifications = Notification.types.map { |n| "  #{n[0]}: #{n[1]}," }.join("\n")
 
   write_template("discourse/tests/fixtures/concerns/notification-types.js", task_name, <<~JS)
     export const NOTIFICATION_TYPES = {
@@ -237,30 +191,12 @@ task 'javascript:update_constants' => :environment do
   write_template("pretty-text/addon/emoji/version.js", task_name, <<~JS)
     export const IMAGE_VERSION = "#{Emoji::EMOJI_VERSION}";
   JS
-
-  groups_json = JSON.parse(File.read("lib/emoji/groups.json"))
-
-  emoji_buttons = groups_json.map do |group|
-    <<~HTML
-			<button type="button" data-section="#{group["name"]}" {{action onCategorySelection "#{group["name"]}"}} class="btn btn-default category-button emoji">
-				 {{replace-emoji ":#{group["tabicon"]}:"}}
-			</button>
-    HTML
-  end
-
-  emoji_sections = groups_json.map { |group| html_for_section(group) }
-
-  components_dir = "discourse/app/templates/components"
-  write_hbs_template("#{components_dir}/emoji-group-buttons.hbs", task_name, emoji_buttons.join)
-  write_hbs_template("#{components_dir}/emoji-group-sections.hbs", task_name, emoji_sections.join)
-
 end
 
-task 'javascript:update' => 'clean_up' do
-  require 'uglifier'
+task "javascript:update" => "clean_up" do
+  require "uglifier"
 
-  yarn = system("yarn install")
-  abort('Unable to run "yarn install"') unless yarn
+  system("pnpm install", exception: true)
 
   versions = {}
   start = Time.now
@@ -268,20 +204,10 @@ task 'javascript:update' => 'clean_up' do
   dependencies.each do |f|
     src = "#{library_src}/#{f[:source]}"
 
-    unless f[:destination]
-      filename = f[:source].split("/").last
-    else
+    if f[:destination]
       filename = f[:destination]
-    end
-
-    if src.include? "highlightjs"
-      puts "Cleanup highlightjs styles and install smaller test bundle"
-      system("rm -rf node_modules/@highlightjs/cdn-assets/styles")
-
-      # We don't need every language for tests
-      langs = ['javascript', 'sql', 'ruby']
-      test_bundle_dest = 'vendor/assets/javascripts/highlightjs/highlight-test-bundle.min.js'
-      File.write(test_bundle_dest, HighlightJs.bundle(langs))
+    else
+      filename = f[:source].split("/").last
     end
 
     if f[:public_root]
@@ -291,8 +217,9 @@ task 'javascript:update' => 'clean_up' do
         dest = "#{public_js}/#{filename}"
       else
         package_dir_name = public_path_name(f)
-        package_version = JSON.parse(File.read("#{library_src}/#{node_package_name(f)}/package.json"))["version"]
-        versions[filename] = "#{package_dir_name}/#{package_version}/#{filename}"
+        package_version =
+          JSON.parse(File.read("#{library_src}/#{node_package_name(f)}/package.json"))["version"]
+        versions[filename.downcase] = "#{package_dir_name}/#{package_version}/#{filename}"
 
         path = "#{public_js}/#{package_dir_name}/#{package_version}"
         dest = "#{path}/#{filename}"
@@ -303,42 +230,9 @@ task 'javascript:update' => 'clean_up' do
       dest = "#{vendor_js}/#{filename}"
     end
 
-    if src.include? "ace.js"
-      versions["ace/ace.js"] = versions.delete("ace.js")
-      ace_root = "#{library_src}/ace-builds/src-min-noconflict/"
-      addtl_files = [ "ext-searchbox", "mode-html", "mode-scss", "mode-sql", "theme-chrome", "theme-chaos", "worker-html"]
-      dest_path = dest.split('/')[0..-2].join('/')
-      addtl_files.each do |file|
-        FileUtils.cp_r("#{ace_root}#{file}.js", dest_path)
-      end
-    end
+    STDERR.puts "New dependency added: #{dest}" unless File.exist?(dest)
 
-    # we need a custom build of uppy because we cannot import
-    # their modules easily, using browserify to do so
-    if src.include? "custom-uppy-build"
-      puts "Building custom uppy using browserify"
-      system("yarn run browserify #{vendor_js}/custom-uppy.js -o node_modules/custom-uppy-build.js")
-    end
-
-    unless File.exist?(dest)
-      STDERR.puts "New dependency added: #{dest}"
-    end
-
-    if f[:uglify]
-      File.write(dest, Uglifier.new.compile(File.read(src)))
-    else
-      FileUtils.cp_r(src, dest)
-    end
-
-    # use absolute path for popper.js's sourcemap
-    # avoids noisy console warnings in dev environment for non-homepage paths
-    if dest.end_with? "popper.js"
-      File.open(dest) do |file|
-        contents = file.read
-        contents.gsub!("sourceMappingURL=popper", "sourceMappingURL=/popper")
-        File.open(dest, "w+") { |d| d.write(contents) }
-      end
-    end
+    FileUtils.cp_r(src, dest)
   end
 
   write_template("discourse/app/lib/public-js-versions.js", "update", <<~JS)
@@ -348,7 +242,7 @@ task 'javascript:update' => 'clean_up' do
   STDERR.puts "Completed copying dependencies: #{(Time.now - start).round(2)} secs"
 end
 
-task 'javascript:clean_up' do
+task "javascript:clean_up" do
   processed = []
   dependencies.each do |f|
     next unless f[:public] && !f[:skip_versioning]
@@ -356,8 +250,8 @@ task 'javascript:clean_up' do
     package_dir_name = public_path_name(f)
     next if processed.include?(package_dir_name)
 
-    versions = Dir["#{File.join(public_js, package_dir_name)}/*"].collect { |p| p.split('/').last }
-    next unless versions.present?
+    versions = Dir["#{File.join(public_js, package_dir_name)}/*"].collect { |p| p.split("/").last }
+    next if versions.blank?
 
     versions = versions.sort { |a, b| Gem::Version.new(a) <=> Gem::Version.new(b) }
     puts "Keeping #{package_dir_name} version: #{versions[-1]}"

@@ -7,23 +7,20 @@ module Reports::TopTrafficSources
     def report_top_traffic_sources(report)
       category_id, include_subcategories = report.add_category_filter
 
-      report.modes = [:table]
+      report.modes = [Report::MODES[:table]]
 
       report.labels = [
-        {
-          property: :domain,
-          title: I18n.t('reports.top_traffic_sources.labels.domain')
-        },
+        { property: :domain, title: I18n.t("reports.top_traffic_sources.labels.domain") },
         {
           property: :num_clicks,
           type: :number,
-          title: I18n.t('reports.top_traffic_sources.labels.num_clicks')
+          title: I18n.t("reports.top_traffic_sources.labels.num_clicks"),
         },
         {
           property: :num_topics,
           type: :number,
-          title: I18n.t('reports.top_traffic_sources.labels.num_topics')
-        }
+          title: I18n.t("reports.top_traffic_sources.labels.num_topics"),
+        },
       ]
 
       options = {
@@ -31,7 +28,7 @@ module Reports::TopTrafficSources
         start_date: report.start_date,
         limit: report.limit || 8,
         category_id: category_id,
-        include_subcategories: include_subcategories
+        include_subcategories: include_subcategories,
       }
 
       result = IncomingLinksReport.find(:top_traffic_sources, options)

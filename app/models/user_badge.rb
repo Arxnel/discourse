@@ -1,68 +1,92 @@
 # frozen_string_literal: true
 
 class UserBadge < ActiveRecord::Base
+  self.ignored_columns = [
+    :old_notification_id, # TODO: Remove once 20240829140226_drop_old_notification_id_columns has been promoted to pre-deploy
+  ]
+
   belongs_to :badge
   belongs_to :user
-  belongs_to :granted_by, class_name: 'User'
+  belongs_to :granted_by, class_name: "User"
   belongs_to :notification, dependent: :destroy
   belongs_to :post
 
-  BOOLEAN_ATTRIBUTES = %w(is_favorite)
+  BOOLEAN_ATTRIBUTES = %w[is_favorite]
 
-  scope :grouped_with_count, -> {
-    group(:badge_id, :user_id)
-      .select_for_grouping
-      .order('MAX(featured_rank) ASC')
-      .includes(:user, :granted_by, { badge: :badge_type }, post: :topic)
-  }
+  scope :grouped_with_count,
+        -> do
+          group(:badge_id, :user_id)
+            .select_for_grouping
+            .order("MAX(featured_rank) ASC")
+            .includes(:user, :granted_by, { badge: :badge_type }, post: :topic)
+        end
 
-  scope :select_for_grouping, -> {
-    select(
-      UserBadge.attribute_names.map do |name|
-        operation = BOOLEAN_ATTRIBUTES.include?(name) ? "BOOL_OR" : "MAX"
-        "#{operation}(user_badges.#{name}) AS #{name}"
-      end,
-      'COUNT(*) AS "count"'
-    )
-  }
+  scope :select_for_grouping,
+        -> do
+          select(
+            UserBadge.attribute_names.map do |name|
+              operation = BOOLEAN_ATTRIBUTES.include?(name) ? "BOOL_OR" : "MAX"
+              "#{operation}(user_badges.#{name}) AS #{name}"
+            end,
+            'COUNT(*) AS "count"',
+          )
+        end
 
-  scope :for_enabled_badges, -> { where('user_badges.badge_id IN (SELECT id FROM badges WHERE enabled)') }
+  scope :for_enabled_badges,
+        -> { where("user_badges.badge_id IN (SELECT id FROM badges WHERE enabled)") }
 
-  validates :badge_id,
-    presence: true,
-    uniqueness: { scope: :user_id },
-    if: :single_grant_badge?
+  scope :by_post_and_user,
+        ->(posts) do
+          posts.reduce(UserBadge.none) do |scope, post|
+            scope.or(UserBadge.where(user_id: post.user_id, post_id: post.id))
+          end
+        end
+  scope :for_post_header_badges,
+        ->(posts) do
+          by_post_and_user(posts).where(
+            "user_badges.badge_id IN (SELECT id FROM badges WHERE show_posts AND enabled AND listable AND show_in_post_header)",
+          )
+        end
+
+  validates :badge_id, presence: true, uniqueness: { scope: :user_id }, if: :single_grant_badge?
 
   validates :user_id, presence: true
   validates :granted_at, presence: true
   validates :granted_by, presence: true
 
   after_create do
-    Badge.increment_counter 'grant_count', self.badge_id
-    UserStat.update_distinct_badge_count self.user_id
-    UserBadge.update_featured_ranks! self.user_id
-    DiscourseEvent.trigger(:user_badge_granted, self.badge_id, self.user_id)
+    Badge.increment_counter "grant_count", self.badge_id
+    user_ids = [self.user_id]
+    UserStat.update_distinct_badge_count(user_ids)
+    UserBadge.update_featured_ranks!(user_ids)
+    self.trigger_user_badge_granted_event
   end
 
   after_destroy do
-    Badge.decrement_counter 'grant_count', self.badge_id
-    UserStat.update_distinct_badge_count self.user_id
-    UserBadge.update_featured_ranks! self.user_id
+    Badge.decrement_counter "grant_count", self.badge_id
+    user_ids = [self.user_id]
+    UserStat.update_distinct_badge_count(user_ids)
+    UserBadge.update_featured_ranks!(user_ids)
+
     DiscourseEvent.trigger(:user_badge_removed, self.badge_id, self.user_id)
+    DiscourseEvent.trigger(:user_badge_revoked, user_badge: self)
   end
 
-  def self.ensure_consistency!
-    self.update_featured_ranks!
+  def self.ensure_consistency!(user_ids = [])
+    self.update_featured_ranks!(user_ids)
   end
 
-  def self.update_featured_ranks!(user_id = nil)
+  def self.update_featured_ranks!(user_ids = [])
+    user_ids = user_ids.join(", ")
+    has_user_ids = !user_ids.empty?
+
     query = <<~SQL
       WITH featured_tl_badge AS -- Find the best trust level badge for each user
       (
         SELECT user_id, max(badge_id) as badge_id
         FROM user_badges
         WHERE badge_id IN (1,2,3,4)
-        #{"AND user_id = #{user_id.to_i}" if user_id}
+        #{"AND user_id IN (#{user_ids})" if has_user_ids}
         GROUP BY user_id
       ),
       ranks AS ( -- Take all user badges, group by user_id and badge_id, and calculate a rank for each one
@@ -82,7 +106,7 @@ class UserBadge < ActiveRecord::Base
         FROM user_badges
         INNER JOIN badges ON badges.id = user_badges.badge_id
         LEFT JOIN featured_tl_badge ON featured_tl_badge.user_id = user_badges.user_id AND featured_tl_badge.badge_id = user_badges.badge_id
-        #{"WHERE user_badges.user_id = #{user_id.to_i}" if user_id}
+        #{"WHERE user_badges.user_id IN (#{user_ids})" if has_user_ids}
         GROUP BY user_badges.user_id, user_badges.badge_id
       )
       -- Now use that data to update the featured_rank column
@@ -93,7 +117,15 @@ class UserBadge < ActiveRecord::Base
     DB.exec query
   end
 
+  def self.trigger_user_badge_granted_event(badge_id, user_id)
+    DiscourseEvent.trigger(:user_badge_granted, badge_id, user_id)
+  end
+
   private
+
+  def trigger_user_badge_granted_event
+    self.class.trigger_user_badge_granted_event(self.badge_id, self.user_id)
+  end
 
   def single_grant_badge?
     self.badge ? self.badge.single_grant? : true
@@ -110,11 +142,11 @@ end
 #  granted_at      :datetime         not null
 #  granted_by_id   :integer          not null
 #  post_id         :integer
-#  notification_id :integer
 #  seq             :integer          default(0), not null
 #  featured_rank   :integer
 #  created_at      :datetime         not null
 #  is_favorite     :boolean
+#  notification_id :bigint
 #
 # Indexes
 #

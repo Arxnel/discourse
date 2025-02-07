@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-describe UserFullNameValidator do
-  let(:validator) { described_class.new(attributes: :name) }
+RSpec.describe UserFullNameValidator do
   subject(:validate) { validator.validate_each(record, :name, @name) }
+
+  let(:validator) { described_class.new(attributes: :name) }
   let(:record) { Fabricate.build(:user, name: @name) }
 
-  context "name not required" do
-    before { SiteSetting.full_name_required = false }
+  context "when name is not required" do
+    before { SiteSetting.full_name_requirement = "optional_at_signup" }
 
     it "allows no name" do
       @name = nil
@@ -21,8 +22,8 @@ describe UserFullNameValidator do
     end
   end
 
-  context "name required" do
-    before { SiteSetting.full_name_required = true }
+  context "when name is required" do
+    before { SiteSetting.full_name_requirement = "required_at_signup" }
 
     it "adds error for nil name" do
       @name = nil

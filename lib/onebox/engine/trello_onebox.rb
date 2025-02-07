@@ -6,13 +6,17 @@ module Onebox
       include Engine
       include StandardEmbed
 
-      matches_regexp(/^https:\/\/trello\.com\/[bc]\/\W*/)
+      matches_domain("trello.com")
       requires_iframe_origins "https://trello.com"
       always_https
 
+      def self.matches_path(path)
+        path.match?(%r{^/[bc]/\w*})
+      end
+
       def to_html
         src = "https://trello.com/#{match[:type]}/#{match[:key]}.html"
-        height = match[:type] == 'b' ? 400 : 200
+        height = match[:type] == "b" ? 400 : 200
 
         <<-HTML
           <iframe src="#{src}" width="100%" height="#{height}" frameborder="0" style="border:0"></iframe>

@@ -7,8 +7,12 @@ module Onebox
       include LayoutSupport
       include JSON
 
-      matches_regexp(/^https?:\/\/commons\.wikimedia\.org\/wiki\/(File:.+)/)
+      matches_domain("commons.wikimedia.org")
       always_https
+
+      def self.matches_path(path)
+        path.match?(%r{^/wiki/File:.+})
+      end
 
       def self.priority
         # Wikimedia links end in an image extension.
@@ -25,17 +29,17 @@ module Onebox
       private
 
       def match
-        @match ||= @url.match(/^https?:\/\/commons\.wikimedia\.org\/wiki\/(?<name>File:.+)/)
+        @match ||= @url.match(%r{^https?://commons\.wikimedia\.org/wiki/(?<name>File:.+)})
       end
 
       def data
-        first_page = raw['query']['pages'].first[1]
+        first_page = raw["query"]["pages"].first[1]
 
         {
-          link: first_page['imageinfo'].first['descriptionurl'],
-          title: first_page['title'],
-          image: first_page['imageinfo'].first['url'],
-          thumbnail: first_page['imageinfo'].first['thumburl']
+          link: first_page["imageinfo"].first["descriptionurl"],
+          title: first_page["title"],
+          image: first_page["imageinfo"].first["url"],
+          thumbnail: first_page["imageinfo"].first["thumburl"],
         }
       end
     end

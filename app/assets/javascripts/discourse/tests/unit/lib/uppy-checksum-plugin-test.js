@@ -1,28 +1,32 @@
-import UppyChecksum from "discourse/lib/uppy-checksum-plugin";
+import { setupTest } from "ember-qunit";
 import { module, skip, test } from "qunit";
-import { createFile } from "discourse/tests/helpers/qunit-helpers";
 import sinon from "sinon";
+import UppyChecksum from "discourse/lib/uppy-checksum-plugin";
+import { createFile } from "discourse/tests/helpers/qunit-helpers";
 
 class FakeUppy {
   constructor() {
     this.preprocessors = [];
     this.emitted = [];
     this.files = {
-      "uppy-test/file/vv2/xvejg5w/blah/png-1d-1d-2v-1d-1e-image/jpeg-9043429-1624921727764": {
-        meta: {},
-        data: createFile("test1.png", "image/png", "testblobdata1"),
-        size: 1024,
-      },
-      "uppy-test/file/blah1/ads37x2/blah1/png-1d-1d-2v-1d-1e-image/jpeg-99999-1837921727764": {
-        meta: {},
-        data: createFile("test2.png", "image/png", "testblobdata2"),
-        size: 2048,
-      },
-      "uppy-test/file/mnb3/jfhrg43x/blah3/png-1d-1d-2v-1d-1e-image/jpeg-111111-1837921727764": {
-        meta: {},
-        data: createFile("test2.png", "image/png", "testblobdata2"),
-        size: 209715200,
-      },
+      "uppy-test/file/vv2/xvejg5w/blah/png-1d-1d-2v-1d-1e-image/jpeg-9043429-1624921727764":
+        {
+          meta: {},
+          data: createFile("test1.png", "image/png", "testblobdata1"),
+          size: 1024,
+        },
+      "uppy-test/file/blah1/ads37x2/blah1/png-1d-1d-2v-1d-1e-image/jpeg-99999-1837921727764":
+        {
+          meta: {},
+          data: createFile("test2.png", "image/png", "testblobdata2"),
+          size: 2048,
+        },
+      "uppy-test/file/mnb3/jfhrg43x/blah3/png-1d-1d-2v-1d-1e-image/jpeg-111111-1837921727764":
+        {
+          meta: {},
+          data: createFile("test2.png", "image/png", "testblobdata2"),
+          size: 209715200,
+        },
     };
   }
 
@@ -45,7 +49,9 @@ class FakeUppy {
 
 let withCrypto = window.crypto.subtle ? test : skip;
 
-module("Unit | Utility | UppyChecksum Plugin", function () {
+module("Unit | Utility | UppyChecksum Plugin", function (hooks) {
+  setupTest(hooks);
+
   test("sets the options passed in", function (assert) {
     const capabilities = {};
     const fakeUppy = new FakeUppy();

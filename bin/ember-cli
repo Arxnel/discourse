@@ -1,13 +1,12 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'pathname'
+require "pathname"
 
 RAILS_ROOT = File.expand_path("../../", Pathname.new(__FILE__).realpath)
 PORT = ENV["UNICORN_PORT"] ||= "3000"
 HOSTNAME = ENV["DISCOURSE_HOSTNAME"] ||= "127.0.0.1"
-yarn_dir = File.join(RAILS_ROOT, "app/assets/javascripts/discourse")
-
+CUSTOM_ARGS = %w[--try --test --build --unicorn -u --forward-host]
 PROXY =
   if ARGV.include?("--try")
     "https://try.discourse.org"
@@ -15,9 +14,17 @@ PROXY =
     "http://#{HOSTNAME}:#{PORT}"
   end
 
+def process_running?(pid)
+  !!Process.kill(0, pid)
+rescue Errno::ESRCH
+  false
+end
+
 command =
   if ARGV.include?("--test")
     "test"
+  elsif ARGV.include?("--build")
+    "build"
   else
     "server"
   end
@@ -38,41 +45,59 @@ if ARGV.include?("-h") || ARGV.include?("--help")
   puts "#{"--test".cyan} To run the test suite"
   puts "#{"--unicorn, -u".cyan} To run a unicorn server as well"
   puts "The rest of the arguments are passed to ember server per:", ""
-  exec "yarn -s --cwd #{yarn_dir} run ember #{command} --help"
+  exec "pnpm ember #{command} --help"
 end
 
-args = ["-s", "--cwd", yarn_dir, "run", "ember", command] + ARGV.reject do |a|
-  ["--try", "--test", "--unicorn", "-u"].include?(a)
-end
+args = ["--dir=app/assets/javascripts/discourse", "ember", command] + (ARGV - CUSTOM_ARGS)
 
-if !args.include?("test") && !args.include?("--proxy")
+if !args.include?("test") && !args.include?("build") && !args.include?("--proxy")
   args << "--proxy"
   args << PROXY
 end
 
-exit 1 if !system "yarn -s install --cwd #{yarn_dir}"
-
-if !system("node -p 'require(\"crypto\").createHash(\"md4\")'", out: "/dev/null", err: "/dev/null")
-  $stderr << "#{"ERROR".red}: Node 17 with OpenSSL 3 is currently unsupported\n"
-  $stderr << "Please use node LTS (16.x) instead\n"
+if !system "pnpm", "--dir=#{RAILS_ROOT}", "install"
+  abort "pnpm is not installed. run `npm install -g pnpm`" if !system("command -v pnpm >/dev/null;")
   exit 1
 end
 
+pnpm_env = {
+  "TERM" => "dumb", # simple output from ember-cli, so we can parse/forward it more easily
+}
+pnpm_env["FORWARD_HOST"] = "true" if ARGV.include?("--forward-host")
+
 if ARGV.include?("-u") || ARGV.include?("--unicorn")
   unicorn_env = { "DISCOURSE_PORT" => ENV["DISCOURSE_PORT"] || "4200" }
+
+  if command == "server" && ENV["CODESPACE_NAME"]
+    unicorn_env.merge!(
+      {
+        "DISCOURSE_PORT" => "443",
+        "DISCOURSE_FORCE_HTTPS" => "1",
+        "DISCOURSE_FORCE_HOSTNAME" => "#{ENV["CODESPACE_NAME"]}-4200.#{ENV["GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN"]}"
+      }
+    )
+  end
+
   unicorn_pid = spawn(unicorn_env, __dir__ + "/unicorn")
+  ember_cli_pid = nil
 
   Thread.new do
-    require 'open3'
-    Open3.popen2e("yarn", *args.to_a.flatten) do |i, oe, t|
-      puts "Ember CLI running on PID: #{t.pid}"
+    require "open3"
+    Open3.popen2e(pnpm_env, "pnpm", *args.to_a.flatten) do |i, oe, t|
+      ember_cli_pid = t.pid
+      puts "Ember CLI running on PID: #{ember_cli_pid}"
       oe.each do |line|
-        if line.include?("\e[32m200\e") || line.include?("\e[36m304\e[0m") || line.include?("POST /message-bus")
+        if line.include?("\e[32m200\e") || line.include?("\e[36m304\e[0m") ||
+             line.include?("POST /message-bus")
           # skip 200s and 304s and message bus
         else
-          puts line
+          puts "[ember-cli] #{line}"
         end
       end
+    end
+    if process_running?(unicorn_pid)
+      puts "[bin/ember-cli] ember-cli process stopped. Terminating unicorn."
+      Process.kill("TERM", unicorn_pid)
     end
   end
 
@@ -82,6 +107,11 @@ if ARGV.include?("-u") || ARGV.include?("--unicorn")
   end
 
   Process.wait(unicorn_pid)
+
+  if ember_cli_pid && process_running?(ember_cli_pid)
+    puts "[bin/ember-cli] unicorn process stopped. Terminating ember-cli."
+    Process.kill("TERM", ember_cli_pid)
+  end
 else
-  exec "yarn", *args.to_a.flatten
+  exec(pnpm_env, "pnpm", *args.to_a.flatten)
 end

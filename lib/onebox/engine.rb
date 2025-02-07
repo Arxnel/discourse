@@ -4,12 +4,17 @@ module Onebox
   module Engine
     def self.included(object)
       object.extend(ClassMethods)
+      object.singleton_class.class_eval do
+        def method_added(method_name)
+          if method_name == :matches_path
+            raise "Define matches_path as a class method (def self.matches_path) in #{self}"
+          end
+        end
+      end
     end
 
     def self.engines
-      constants.select do |constant|
-        constant.to_s =~ /Onebox$/
-      end.map(&method(:const_get))
+      constants.select { |constant| constant.to_s =~ /Onebox\z/ }.sort.map(&method(:const_get))
     end
 
     def self.all_iframe_origins
@@ -25,7 +30,7 @@ module Onebox
           escaped_origin = escaped_origin.sub("\\*", '\S*')
         end
 
-        Regexp.new("\\A#{escaped_origin}", 'i')
+        Regexp.new("\\A#{escaped_origin}", "i")
       end
     end
 
@@ -36,7 +41,6 @@ module Onebox
       return @options if opt.nil? # make sure options provided
       opt = opt.to_h if opt.instance_of?(OpenStruct)
       @options.merge!(opt)
-      @options
     end
 
     def initialize(url, timeout = nil)
@@ -50,7 +54,7 @@ module Onebox
       @url = url
       @uri = URI(url)
       if always_https?
-        @uri.scheme = 'https'
+        @uri.scheme = "https"
         @url = @uri.to_s
       end
       @timeout = timeout || Onebox.options.timeout
@@ -103,9 +107,15 @@ module Onebox
         end
       end
 
-      def ===(other)
-        if other.kind_of?(URI)
-          !!(other.to_s =~ class_variable_get(:@@matcher))
+      def ===(uri)
+        if uri.is_a?(URI)
+          # Check for new domain/path matching
+          if class_variable_defined?(:@@domains)
+            matches?(uri) && matches_path(uri.path)
+          else
+            # Fallback to matches_regexp if no domains are defined
+            class_variable_defined?(:@@matcher) && !!(uri.to_s =~ class_variable_get(:@@matcher))
+          end
         else
           super
         end
@@ -117,6 +127,28 @@ module Onebox
 
       def matches_regexp(r)
         class_variable_set :@@matcher, r
+      end
+
+      def matches_domain(*domains, allow_subdomains: false)
+        class_variable_set :@@domains, domains.map(&:downcase)
+        class_variable_set :@@allow_subdomains, allow_subdomains
+      end
+
+      def matches?(uri)
+        domains = class_variable_get(:@@domains)
+        allow_subdomains = class_variable_get(:@@allow_subdomains)
+
+        if allow_subdomains
+          domains.any? do |domain|
+            uri.host.downcase.end_with?(".#{domain}") || uri.host.downcase == domain
+          end
+        else
+          domains.include?(uri.host.downcase)
+        end
+      end
+
+      def matches_path(path)
+        true
       end
 
       def matches_content_type(ct)
@@ -167,6 +199,7 @@ require_relative "engine/google_play_app_onebox"
 require_relative "engine/image_onebox"
 require_relative "engine/video_onebox"
 require_relative "engine/audio_onebox"
+require_relative "engine/threads_status_onebox"
 require_relative "engine/stack_exchange_onebox"
 require_relative "engine/twitter_status_onebox"
 require_relative "engine/wikimedia_onebox"
@@ -211,3 +244,6 @@ require_relative "engine/reddit_media_onebox"
 require_relative "engine/google_drive_onebox"
 require_relative "engine/facebook_media_onebox"
 require_relative "engine/hackernews_onebox"
+require_relative "engine/motoko_onebox"
+require_relative "engine/tiktok_onebox"
+require_relative "engine/loom_onebox"

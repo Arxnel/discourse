@@ -7,7 +7,12 @@ module Onebox
       include LayoutSupport
       include JSON
 
-      matches_regexp(/^https?:\/\/(www\.)?(m\.)?xkcd\.com\/\d+/)
+      matches_domain("xkcd.com", "www.xkcd.com", "m.xkcd.com")
+      always_https
+
+      def self.matches_path(path)
+        path.match?(%r{^/\d+$})
+      end
 
       def url
         "https://xkcd.com/#{match[:comic_id]}/info.0.json"
@@ -20,12 +25,7 @@ module Onebox
       end
 
       def data
-        {
-          link: @url,
-          title: raw['safe_title'],
-          image: raw['img'],
-          description: raw['alt']
-        }
+        { link: @url, title: raw["safe_title"], image: raw["img"], description: raw["alt"] }
       end
     end
   end
