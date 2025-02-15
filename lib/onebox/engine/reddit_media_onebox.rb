@@ -6,7 +6,8 @@ module Onebox
       include Engine
       include StandardEmbed
 
-      matches_regexp(/^https?:\/\/(www\.)?reddit\.com/)
+      always_https
+      matches_domain("reddit.com", "www.reddit.com")
 
       def to_html
         if raw[:type] == "image"
@@ -25,7 +26,7 @@ module Onebox
               </article>
             </aside>
           HTML
-        elsif raw[:type] =~ /^video[\/\.]/
+        elsif raw[:type] =~ %r{^video[/\.]}
           <<-HTML
             <aside class="onebox reddit">
               <header class="source">
@@ -46,8 +47,7 @@ module Onebox
           HTML
         else
           html = Onebox::Engine::AllowlistedGenericOnebox.new(@url, @timeout).to_html
-          return if Onebox::Helpers.blank?(html)
-          html
+          html.presence
         end
       end
     end

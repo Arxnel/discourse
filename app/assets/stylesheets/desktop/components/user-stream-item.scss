@@ -1,14 +1,8 @@
-// Desktop styles for "user-stream-item" component
-.user-stream {
-  .time,
-  .delete-info,
-  .draft-type {
-    margin-right: 8px;
-  }
+.user-stream-item .draft-icon {
+  width: 3rem;
+}
 
-  .notification {
-    &.unread {
-      background-color: var(--tertiary-low);
-    }
-  }
+.user-stream-item .excerpt,
+.user-stream-item-actions {
+  margin: 0.75em 0 0 3.5em;
 }

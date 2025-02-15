@@ -1,26 +1,48 @@
-import buildStaticRoute from "discourse/routes/build-static-route";
+import { action } from "@ember/object";
 import { next } from "@ember/runloop";
+import { service } from "@ember/service";
+import DiscourseRoute from "discourse/routes/discourse";
 
-const SignupRoute = buildStaticRoute("signup");
+export default class SignupRoute extends DiscourseRoute {
+  @service siteSettings;
+  @service router;
+  @service login;
 
-SignupRoute.reopen({
+  authComplete = false;
+
   beforeModel() {
-    let canSignUp = this.controllerFor("application").get("canSignUp");
+    this.authComplete = document.getElementById(
+      "data-authentication"
+    )?.dataset.authenticationData;
 
-    if (!this.siteSettings.login_required) {
-      this.replaceWith("discovery.latest").then((e) => {
-        if (canSignUp) {
-          next(() => e.send("showCreateAccount"));
-        }
-      });
+    if (this.login.isOnlyOneExternalLoginMethod && !this.authComplete) {
+      this.login.singleExternalLogin({ signup: true });
     } else {
-      this.replaceWith("login").then((e) => {
-        if (canSignUp) {
-          next(() => e.send("showCreateAccount"));
-        }
-      });
+      this.showCreateAccount();
     }
-  },
-});
+  }
 
-export default SignupRoute;
+  setupController(controller) {
+    super.setupController(...arguments);
+
+    if (this.login.isOnlyOneExternalLoginMethod && !this.authComplete) {
+      controller.set("isRedirectingToExternalAuth", true);
+    }
+  }
+
+  @action
+  async showCreateAccount() {
+    const { canSignUp } = this.controllerFor("application");
+    if (canSignUp && this.siteSettings.full_page_login) {
+      return;
+    }
+    const route = await this.router
+      .replaceWith(
+        this.siteSettings.login_required ? "login" : "discovery.latest"
+      )
+      .followRedirects();
+    if (canSignUp) {
+      next(() => route.send("showCreateAccount"));
+    }
+  }
+}

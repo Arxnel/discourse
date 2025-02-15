@@ -1,10 +1,14 @@
 <h4><a href="{{link}}" target="_blank" rel="noopener">{{title}}</a></h4>
 
+<div class="git-blob-info">
+  <a href="{{link}}" rel="noopener"><code>{{sha1}}</code></a>
+</div>
+
 {{^binary}}
   {{^has_lines}}
     {{#model_file}}
       <iframe class="render-viewer" width="{{width}}" height="{{height}}" src="{{content}}" sandbox="allow-scripts allow-same-origin allow-top-navigation ">
-        Viewer requires iframe.
+        {{i18n.requires_iframe}}
       </iframe>
     {{/model_file}}
 
@@ -39,22 +43,21 @@
     </style>
     }}
 
-    <pre class="onebox">
-      <code class="{{lang}}">
-        <ol class="start lines" start="{{cr_results.from}}" style="counter-reset: li-counter {{cr_results.from_minus_one}} ;">
-          {{#lines}}
-            <li{{#selected}} class="selected"{{/selected}}>{{data}}</li>
-          {{/lines}}
-        </ol>
-      </code>
-    </pre>
+    {{!-- pre and code are intentionally on the same line to control whitespace --}}
+    <pre class="onebox"><code class="{{lang}}">
+      <ol class="start lines" start="{{cr_results.from}}" style="counter-reset: li-counter {{cr_results.from_minus_one}} ;">
+        {{#lines}}
+          <li{{#selected}} class="selected"{{/selected}}>{{data}}</li>
+        {{/lines}}
+      </ol>
+    </code></pre>
   {{/has_lines}}
 {{/binary}}
 
 {{#binary}}
-  This file is binary. <a href="{{link}}" target="_blank" rel="noopener">show original</a>
+  {{i18n.binary_file}} <a href="{{link}}" target="_blank" rel="noopener">{{i18n.show_original}}</a>
 {{/binary}}
 
 {{#truncated}}
-  This file has been truncated. <a href="{{link}}" target="_blank" rel="noopener">show original</a>
+  {{i18n.truncated_file}} <a href="{{link}}" target="_blank" rel="noopener">{{i18n.show_original}}</a>
 {{/truncated}}

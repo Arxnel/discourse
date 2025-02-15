@@ -1,6 +1,6 @@
-import { UploadPreProcessorPlugin } from "discourse/lib/uppy-plugin-base";
 import { Promise } from "rsvp";
-import { bind } from "discourse-common/utils/decorators";
+import { bind } from "discourse/lib/decorators";
+import { UploadPreProcessorPlugin } from "discourse/lib/uppy-plugin-base";
 
 export default class UppyMediaOptimization extends UploadPreProcessorPlugin {
   static pluginId = "uppy-media-optimization";
@@ -51,8 +51,8 @@ export default class UppyMediaOptimization extends UploadPreProcessorPlugin {
 
   @bind
   async _optimizeSerial(fileIds) {
-    let optimizeTasks = fileIds.map((fileId) => () =>
-      this._optimizeFile(fileId)
+    let optimizeTasks = fileIds.map(
+      (fileId) => () => this._optimizeFile(fileId)
     );
 
     for (const task of optimizeTasks) {

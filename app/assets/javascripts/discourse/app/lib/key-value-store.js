@@ -1,3 +1,7 @@
+import { isTesting } from "discourse/lib/environment";
+
+const TEST_KEY_PREFIX = "__test_";
+
 // A simple key value store that uses LocalStorage
 let safeLocalStorage;
 
@@ -9,8 +13,8 @@ try {
     // makes sure we can write to the local storage
     safeLocalStorage["safeLocalStorage"] = true;
   }
-} catch (e) {
-  // cookies disabled, we don't care
+} catch {
+  // local storage disabled
   safeLocalStorage = null;
 }
 
@@ -18,18 +22,31 @@ export default class KeyValueStore {
   context = null;
 
   constructor(ctx) {
-    this.context = ctx;
+    this.context = isTesting() ? `${TEST_KEY_PREFIX}${ctx}` : ctx;
   }
 
   abandonLocal() {
+    return this.removeKeys();
+  }
+
+  removeKeys(predicate = () => true) {
     if (!safeLocalStorage) {
       return;
     }
 
     let i = safeLocalStorage.length - 1;
+
     while (i >= 0) {
       let k = safeLocalStorage.key(i);
-      if (k.substring(0, this.context.length) === this.context) {
+      let v = safeLocalStorage[k];
+      try {
+        v = JSON.parse(v);
+      } catch {}
+
+      if (
+        k.substring(0, this.context.length) === this.context &&
+        predicate(k, v)
+      ) {
         safeLocalStorage.removeItem(k);
       }
       i--;
@@ -89,7 +106,7 @@ export default class KeyValueStore {
 
     try {
       return JSON.parse(safeLocalStorage[this.context + key]);
-    } catch (e) {}
+    } catch {}
   }
 }
 

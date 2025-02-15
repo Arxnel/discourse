@@ -5,18 +5,19 @@ module SecondFactor::Actions
     def no_second_factors_enabled!(params)
       user = find_user(params[:user_id])
       AdminConfirmation.new(user, current_user).create_confirmation
+      nil
     end
 
     def second_factor_auth_required!(params)
       user = find_user(params[:user_id])
-      description = I18n.t(
-        "second_factor_auth.actions.grant_admin.description",
-        username: "@#{user.username}"
-      )
+      description =
+        I18n.t("second_factor_auth.actions.grant_admin.description", username: "@#{user.username}")
       {
-        callback_params: { user_id: user.id },
-        redirect_path: admin_user_show_path(id: user.id, username: user.username),
-        description: description
+        callback_params: {
+          user_id: user.id,
+        },
+        redirect_url: admin_user_show_path(id: user.id, username: user.username),
+        description: description,
       }
     end
 
@@ -24,6 +25,7 @@ module SecondFactor::Actions
       user = find_user(callback_params[:user_id])
       user.grant_admin!
       StaffActionLogger.new(current_user).log_grant_admin(user)
+      nil
     end
 
     private

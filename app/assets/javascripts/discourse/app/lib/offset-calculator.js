@@ -1,4 +1,4 @@
-import deprecated from "discourse-common/lib/deprecated";
+import deprecated from "discourse/lib/deprecated";
 
 export function scrollTopFor(y) {
   return y - offsetCalculator();
@@ -10,6 +10,7 @@ export function minimumOffset() {
     {
       since: "2.8.0.beta10",
       dropFrom: "2.9.0.beta2",
+      id: "discourse.offset-calculator.minimumOffset",
     }
   );
 
@@ -40,14 +41,14 @@ export default function offsetCalculator() {
   const min = headerOffset();
 
   // on mobile, just use the header
-  if (document.querySelector("html").classList.contains("mobile-view")) {
+  if (document.documentElement.classList.contains("mobile-view")) {
     return min;
   }
 
   const windowHeight = window.innerHeight;
   const documentHeight = document.body.clientHeight;
-  const topicBottomOffsetTop = document.getElementById("topic-bottom")
-    .offsetTop;
+  const topicBottomOffsetTop =
+    document.getElementById("topic-bottom").offsetTop;
 
   // the footer is bigger than the window, we can scroll down past the last post
   if (documentHeight - windowHeight > topicBottomOffsetTop) {

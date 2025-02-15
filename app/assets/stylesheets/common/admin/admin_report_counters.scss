@@ -19,9 +19,6 @@
           color: var(--primary-low-mid);
           min-width: 14px;
           text-align: center;
-        }
-
-        .d-icon {
           margin: 0;
         }
       }
@@ -34,7 +31,7 @@
 
       .d-icon-minus {
         color: var(--primary-medium);
-        font-size: $font-down-3;
+        font-size: var(--font-down-3);
       }
 
       &.high-trending-up,
@@ -43,6 +40,7 @@
           color: var(--success);
         }
       }
+
       &.high-trending-down,
       &.trending-down {
         .d-icon {

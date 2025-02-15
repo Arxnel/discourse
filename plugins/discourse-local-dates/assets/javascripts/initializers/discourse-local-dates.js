@@ -1,13 +1,20 @@
-import deprecated from "discourse-common/lib/deprecated";
-import { getOwner } from "discourse-common/lib/get-owner";
-import { hidePopover, showPopover } from "discourse/lib/d-popover";
-import LocalDateBuilder from "../lib/local-date-builder";
-import { withPluginApi } from "discourse/lib/plugin-api";
-import showModal from "discourse/lib/show-modal";
+import { setOwner } from "@ember/owner";
+import { service } from "@ember/service";
+import { htmlSafe } from "@ember/template";
+import { bind } from "discourse/lib/decorators";
 import { downloadCalendar } from "discourse/lib/download-calendar";
-import { renderIcon } from "discourse-common/lib/icon-library";
-import I18n from "I18n";
+import { iconHTML, renderIcon } from "discourse/lib/icon-library";
+import { withPluginApi } from "discourse/lib/plugin-api";
+import {
+  addTagDecorateCallback,
+  addTextDecorateCallback,
+} from "discourse/lib/to-markdown";
+import { i18n } from "discourse-i18n";
+import generateDateMarkup from "discourse/plugins/discourse-local-dates/lib/local-date-markup-generator";
+import LocalDatesCreateModal from "../discourse/components/modal/local-dates-create";
+import LocalDateBuilder from "../lib/local-date-builder";
 
+// Import applyLocalDates from discourse/lib/local-dates instead
 export function applyLocalDates(dates, siteSettings) {
   if (!siteSettings.discourse_local_dates_enabled) {
     return;
@@ -15,19 +22,27 @@ export function applyLocalDates(dates, siteSettings) {
 
   const currentUserTZ = moment.tz.guess();
 
-  dates.forEach((element) => {
+  dates.forEach((element, index, arr) => {
     const opts = buildOptionsFromElement(element, siteSettings);
 
+    if (
+      element.attributes["data-range"]?.value === "to" &&
+      index !== 0 &&
+      arr[index - 1].attributes["data-range"]?.value === "from"
+    ) {
+      const fromElement = arr[index - 1];
+      if (_rangeIsSameLocalDay(fromElement, element)) {
+        opts.sameLocalDayAsFrom = true;
+      }
+    }
+
     const localDateBuilder = new LocalDateBuilder(opts, currentUserTZ).build();
+
     element.innerText = "";
     element.insertAdjacentHTML(
       "beforeend",
-      `
-        <svg class="fa d-icon d-icon-globe-americas svg-icon" xmlns="http://www.w3.org/2000/svg">
-          <use href="#globe-americas"></use>
-        </svg>
-        <span class="relative-time">${localDateBuilder.formated}</span>
-      `
+      `${iconHTML("earth-americas")}
+        <span class="relative-time">${localDateBuilder.formatted}</span>`
     );
     element.setAttribute("aria-label", localDateBuilder.textPreview);
 
@@ -37,6 +52,23 @@ export function applyLocalDates(dates, siteSettings) {
     }
     element.classList.add(...classes);
   });
+}
+
+function _rangeIsSameLocalDay(fromElement, toElement) {
+  if (
+    !fromElement.attributes["data-time"] ||
+    !toElement.attributes["data-time"]
+  ) {
+    return false;
+  }
+  const timezone = fromElement.attributes["data-timezone"].value;
+  const from = moment(_getDateFromElement(fromElement)).tz(timezone);
+  const to = moment(_getDateFromElement(toElement)).tz(timezone);
+  return from.isSame(to, "day");
+}
+
+function _getDateFromElement(element) {
+  return `${element.attributes["data-date"].value}T${element.attributes["data-time"].value}`;
 }
 
 function buildOptionsFromElement(element, siteSettings) {
@@ -65,89 +97,144 @@ function buildOptionsFromElement(element, siteSettings) {
   return opts;
 }
 
+function buildOptionsFromMarkdownTag(element) {
+  const opts = {};
+
+  // siteSettings defaults as used by buildOptionsFromElement are purposefully
+  // ommitted to reproduce exactly what was on the original element
+  opts.time = element.attributes["data-time"];
+  opts.date = element.attributes["data-date"];
+  opts.recurring = element.attributes["data-recurring"];
+  opts.timezones = element.attributes["data-timezones"];
+  opts.timezone = element.attributes["data-timezone"];
+  opts.calendar = (element.attributes["data-calendar"] || "on") === "on";
+  opts.displayedTimezone = element.attributes["data-displayed-timezone"];
+  opts.format = element.attributes["data-format"];
+  opts.countdown = element.attributes["data-countdown"];
+  opts.range = element.attributes["data-range"];
+
+  return opts;
+}
+
 function _rangeElements(element) {
   if (!element.parentElement) {
     return [];
   }
 
-  // TODO: element.parentElement.children.length !== 2 is a fallback to old solution for ranges
-  // Condition can be removed after migration to [date-range]
-  if (
-    element.dataset.range !== "true" &&
-    element.parentElement.children.length !== 2
-  ) {
-    return [element];
+  if (element.dataset.range) {
+    return _partitionedRanges(element).find((pair) => pair.includes(element));
   }
 
-  return Array.from(element.parentElement.children).filter(
-    (span) => span.dataset.date
+  return [element];
+}
+
+function _partitionedRanges(element) {
+  const partitions = [];
+  const ranges = Array.from(element.parentElement.children).filter(
+    (span) => span.dataset.range
   );
+
+  while (ranges.length > 0) {
+    partitions.push(ranges.splice(0, 2));
+  }
+
+  return partitions;
 }
 
 function initializeDiscourseLocalDates(api) {
-  const siteSettings = api.container.lookup("site-settings:main");
-  const chat = api.container.lookup("service:chat");
-  const defaultTitle = I18n.t("discourse_local_dates.default_title", {
+  const modal = api.container.lookup("service:modal");
+  const siteSettings = api.container.lookup("service:site-settings");
+  const defaultTitle = i18n("discourse_local_dates.default_title", {
     site_name: siteSettings.title,
   });
 
-  if (chat) {
-    chat.addToolbarButton({
-      title: "discourse_local_dates.title",
-      id: "local-dates",
-      icon: "calendar-alt",
-      action: "insertDiscourseLocalDate",
+  api.decorateCookedElement((elem, helper) => {
+    const dates = elem.querySelectorAll(".discourse-local-date");
+
+    applyLocalDates(dates, siteSettings);
+
+    const topicTitle = helper?.getModel()?.topic?.title;
+    dates.forEach((date) => {
+      date.dataset.title = date.dataset.title || topicTitle || defaultTitle;
     });
-
-    api.modifyClass("component:chat-composer", {
-      pluginId: "discourse-local-dates",
-      actions: {
-        insertDiscourseLocalDate() {
-          const insertDate = this.addText.bind(this);
-          showModal("discourse-local-dates-create-modal").setProperties({
-            insertDate,
-          });
-        },
-      },
-    });
-  }
-
-  api.decorateCookedElement(
-    (elem, helper) => {
-      const dates = elem.querySelectorAll(".discourse-local-date");
-
-      applyLocalDates(dates, siteSettings);
-
-      const topicTitle = helper?.getModel()?.topic?.title;
-      dates.forEach((date) => {
-        date.dataset.title = date.dataset.title || topicTitle || defaultTitle;
-      });
-    },
-    { id: "discourse-local-date" }
-  );
+  });
 
   api.onToolbarCreate((toolbar) => {
     toolbar.addButton({
       title: "discourse_local_dates.title",
       id: "local-dates",
       group: "extras",
-      icon: "calendar-alt",
-      sendAction: (event) =>
-        toolbar.context.send("insertDiscourseLocalDate", event),
+      icon: "calendar-days",
+      perform: (event) =>
+        modal.show(LocalDatesCreateModal, {
+          model: { insertDate: (markup) => event.addText(markup) },
+        }),
+      shortcut: "Shift+.",
+      shortcutAction: (event) => {
+        const timezone = api.getCurrentUser().user_option.timezone;
+        const time = moment().format("HH:mm:ss");
+        const date = moment().format("YYYY-MM-DD");
+
+        event.addText(`[date=${date} time=${time} timezone="${timezone}"]`);
+      },
     });
   });
 
-  api.modifyClass("component:d-editor", {
-    pluginId: "discourse-local-dates",
-    actions: {
-      insertDiscourseLocalDate(toolbarEvent) {
-        showModal("discourse-local-dates-create-modal").setProperties({
-          insertDate: (markup) => {
-            toolbarEvent.addText(markup);
+  addTextDecorateCallback(function (
+    text,
+    nextElement,
+    _previousElement,
+    metadata
+  ) {
+    if (
+      metadata.discourseLocalDateStartRangeOpts &&
+      nextElement?.attributes.class?.includes("discourse-local-date") &&
+      text === "→"
+    ) {
+      return "";
+    }
+  });
+  addTagDecorateCallback(function () {
+    if (this.element.attributes.class?.includes("discourse-local-date")) {
+      if (this.metadata.discourseLocalDateStartRangeOpts) {
+        const startRangeOpts = this.metadata.discourseLocalDateStartRangeOpts;
+        const endRangeOpts = buildOptionsFromMarkdownTag(this.element);
+        const markup = generateDateMarkup(
+          {
+            date: startRangeOpts.date,
+            time: startRangeOpts.time,
+            format: startRangeOpts.format,
           },
-        });
-      },
-    },
+          endRangeOpts,
+          true,
+          {
+            date: endRangeOpts.date,
+            time: endRangeOpts.time,
+            format: endRangeOpts.format,
+          }
+        );
+        this.prefix = markup;
+        this.metadata.discourseLocalDateStartRangeOpts = null;
+        return "";
+      }
+      if (
+        this.element.attributes["data-range"] === "true" ||
+        this.element.attributes["data-range"] === "from" ||
+        this.element.attributes["data-range"] === "to"
+      ) {
+        this.metadata.discourseLocalDateStartRangeOpts =
+          buildOptionsFromMarkdownTag(this.element);
+        return "";
+      }
+      const opts = buildOptionsFromMarkdownTag(this.element, siteSettings);
+      const markup = generateDateMarkup(
+        { date: opts.date, time: opts.time, format: opts.format },
+        opts,
+        false
+      );
+      this.prefix = markup;
+      return "";
+    }
   });
 }
 
@@ -172,7 +259,7 @@ function buildHtmlPreview(element, siteSettings) {
 
     const dateTimeNode = document.createElement("span");
     dateTimeNode.classList.add("date-time");
-    dateTimeNode.innerHTML = preview.formated;
+    dateTimeNode.innerHTML = preview.formatted;
     previewNode.appendChild(dateTimeNode);
 
     return previewNode;
@@ -220,7 +307,7 @@ function _downloadCalendarNode(element) {
 
   const node = document.createElement("div");
   node.classList.add("download-calendar");
-  node.innerHTML = `${renderIcon("string", "file")} ${I18n.t(
+  node.innerHTML = `${renderIcon("string", "file")} ${i18n(
     "download_calendar.add_to_calendar"
   )}`;
   node.setAttribute("data-starts-at", startDate.toISOString());
@@ -250,65 +337,55 @@ function _calculateDuration(element) {
   return element.dataset === startDataset ? duration : -duration;
 }
 
-export default {
-  name: "discourse-local-dates",
+class LocalDatesInit {
+  @service siteSettings;
+  @service tooltip;
 
-  showDatePopover(event) {
-    const owner = getOwner(this);
-    if (owner.isDestroyed || owner.isDestroying) {
-      return;
+  constructor(owner) {
+    setOwner(this, owner);
+
+    window.addEventListener("click", this.showDatePopover, { passive: true });
+
+    if (this.siteSettings.discourse_local_dates_enabled) {
+      withPluginApi("0.8.8", initializeDiscourseLocalDates);
     }
+  }
 
-    const siteSettings = owner.lookup("site-settings:main");
-    if (event?.target?.classList?.contains("discourse-local-date")) {
-      if ($(document.getElementById("d-popover"))[0]) {
-        hidePopover(event);
-      } else {
-        showPopover(event, {
-          htmlContent: buildHtmlPreview(event.target, siteSettings),
-        });
-      }
-    } else if (event?.target?.classList?.contains("download-calendar")) {
+  @bind
+  showDatePopover(event) {
+    if (event?.target?.classList?.contains("download-calendar")) {
       const dataset = event.target.dataset;
-      hidePopover(event);
       downloadCalendar(dataset.title, [
         {
           startsAt: dataset.startsAt,
           endsAt: dataset.endsAt,
         },
       ]);
-    } else {
-      hidePopover(event);
+
+      return this.tooltip.close("local-date");
     }
-  },
 
-  hideDatePopover(event) {
-    if (event?.target?.classList?.contains("discourse-local-date")) {
-      hidePopover(event);
+    if (!event?.target?.classList?.contains("discourse-local-date")) {
+      return;
     }
-  },
 
-  initialize(container) {
-    const router = container.lookup("router:main");
-    router.on("routeWillChange", hidePopover);
-
-    window.addEventListener("click", this.showDatePopover);
-
-    const siteSettings = container.lookup("site-settings:main");
-    if (siteSettings.discourse_local_dates_enabled) {
-      $.fn.applyLocalDates = function () {
-        deprecated(
-          "`$.applyLocalDates()` is deprecated, import and use `applyLocalDates()` instead."
-        );
-
-        return applyLocalDates(this.toArray(), siteSettings);
-      };
-
-      withPluginApi("0.8.8", initializeDiscourseLocalDates);
-    }
-  },
+    return this.tooltip.show(event.target, {
+      identifier: "local-date",
+      content: htmlSafe(buildHtmlPreview(event.target, this.siteSettings)),
+    });
+  }
 
   teardown() {
     window.removeEventListener("click", this.showDatePopover);
+  }
+}
+
+export default {
+  initialize(owner) {
+    this.instance = new LocalDatesInit(owner);
+  },
+  teardown() {
+    this.instance.teardown();
+    this.instance = null;
   },
 };

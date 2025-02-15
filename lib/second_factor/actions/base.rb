@@ -3,11 +3,22 @@
 module SecondFactor::Actions
   class Base
     include Rails.application.routes.url_helpers
-    attr_reader :current_user, :guardian
+    attr_reader :current_user, :guardian, :request
 
-    def initialize(guardian)
+    def initialize(guardian, request, target_user:, opts: nil)
       @guardian = guardian
       @current_user = guardian.user
+      @target_user = target_user
+      @request = request
+      @opts = HashWithIndifferentAccess.new(opts)
+    end
+
+    def skip_second_factor_auth?(params)
+      false
+    end
+
+    def second_factor_auth_skipped!(params)
+      raise NotImplementedError.new
     end
 
     def no_second_factors_enabled!(params)

@@ -1,28 +1,25 @@
+import { service } from "@ember/service";
 import DiscourseRoute from "discourse/routes/discourse";
-import Group from "discourse/models/group";
 
-export default DiscourseRoute.extend({
+export default class AdminUserIndexRoute extends DiscourseRoute {
+  @service site;
+
   model() {
     return this.modelFor("adminUser");
-  },
+  }
 
-  afterModel(model) {
-    if (this.currentUser.admin) {
-      return Group.findAll().then((groups) => {
-        this._availableGroups = groups.filterBy("automatic", false);
-        return model;
-      });
-    }
-  },
+  titleToken() {
+    return this.currentModel.username;
+  }
 
   setupController(controller, model) {
     controller.setProperties({
       originalPrimaryGroupId: model.primary_group_id,
-      availableGroups: this._availableGroups,
+      availableGroups: this.site.groups.filter((g) => !g.automatic),
       customGroupIdsBuffer: model.customGroups.mapBy("id"),
       ssoExternalEmail: null,
       ssoLastPayload: null,
       model,
     });
-  },
-});
+  }
+}

@@ -5,6 +5,10 @@
 // Media queries
 // --------------------------------------------------
 
+@use "sass:color";
+@use "sass:math";
+@use "sass:string";
+
 $breakpoints: (
   mobile-small: 320px,
   mobile-medium: 350px,
@@ -16,9 +20,29 @@ $breakpoints: (
   extra-large: 1140px,
 );
 
-@mixin breakpoint($bp, $rule: max-width, $type: screen) {
-  @media #{$type} and (#{$rule}: map-get($breakpoints, $bp)) {
+@mixin breakpoint($bp, $rule: max-width, $type: screen, $sidebar: false) {
+  /* stylelint-disable-next-line scss/no-global-function-names */
+  $bp-value: map-get($breakpoints, $bp);
+
+  @if $rule == min-width {
+    $bp-value: calc(#{$bp-value} + 1px);
+  }
+
+  @media #{$type} and (#{$rule}: #{$bp-value}) {
     @content;
+  }
+
+  // if you want to consider the sidebar in your breakpoint
+  // you can pass in $sidebar: true
+  // note that your breakpoint will need to be at the root level
+  @if $sidebar {
+    // when the sidebar is shown, we want to increase the breakpoints by the width of the sidebar
+    /* stylelint-disable-next-line scss/no-global-function-names */
+    @media #{$type} and (#{$rule}: calc(#{map-get($breakpoints, $bp)} + #{$d-sidebar-width})) {
+      .has-sidebar-page {
+        @content;
+      }
+    }
   }
 }
 
@@ -28,20 +52,28 @@ $breakpoints: (
 // Clearfix
 
 @mixin clearfix() {
-  &:before,
-  &:after {
+  &::before,
+  &::after {
     content: "";
     display: table;
   }
-  &:after {
+
+  &::after {
     clear: both;
   }
 }
 
-//noinspection CssOptimizeSimilarProperties
 @mixin linear-gradient($start-color, $end-color) {
   background-color: $start-color;
   background-image: linear-gradient(to bottom, $start-color, $end-color);
+}
+
+@mixin darken-background($background-color, $amt) {
+  $overlay: dark-light-choose(
+    rgba(var(--primary-rgb), $amt),
+    rgba(var(--secondary-rgb), $amt)
+  );
+  background-image: linear-gradient(to bottom, $overlay 100%, $overlay 100%);
 }
 
 // Visibility
@@ -69,6 +101,7 @@ $breakpoints: (
   text-overflow: ellipsis;
   word-wrap: break-word;
   -webkit-line-clamp: $lines;
+  -moz-box-orient: vertical;
   -webkit-box-orient: vertical;
 }
 
@@ -85,15 +118,9 @@ $hpad: 0.65em;
   line-height: normal;
   box-sizing: border-box;
   padding: $vpad $hpad;
-  .ios-device & {
-    font-size: var(--font-size-ios-input);
-    padding-top: $vpad * 0.8;
-    padding-bottom: $vpad * 0.8;
-  }
 }
 
 @mixin sticky {
-  position: -webkit-sticky;
   position: sticky;
 }
 
@@ -101,44 +128,37 @@ $hpad: 0.65em;
 
 @mixin user-select($mode) {
   -webkit-user-select: $mode;
-  -moz-user-select: $mode;
-  -ms-user-select: $mode;
   user-select: $mode;
 }
 
 @mixin unselectable {
+  cursor: default;
   @include user-select(none);
 }
 
 // Stuff we repeat
 @mixin post-aside {
-  border-left: 5px solid var(--primary-low);
+  border-left: 5px solid var(--primary-300);
   background-color: var(--blend-primary-secondary-5);
 }
 
 // We still need -webkit for latest iPhone and Safari
 @mixin transform($transforms) {
-  -webkit-transform: $transforms;
   transform: $transforms;
 }
 
 @mixin appearance-none() {
   // resets default browser styles
-  -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
 }
 
 @mixin default-focus() {
   border-color: var(--tertiary);
-  outline: 1px solid var(--tertiary);
-  outline-offset: 0;
+  outline: 2px solid var(--tertiary);
+  outline-offset: -2px;
 }
 
 @mixin fa-rotate($degrees, $rotation) {
-  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=#{$rotation})";
-  -webkit-transform: rotate($degrees);
-  -ms-transform: rotate($degrees);
   transform: rotate($degrees);
 }
 
@@ -154,10 +174,10 @@ $hpad: 0.65em;
   $encoded: "";
   $slice: 2000;
   $index: 0;
-  $loops: ceil(str-length($svg) / $slice);
+  $loops: math.ceil(math.div(string.length($svg), $slice));
 
   @for $i from 1 through $loops {
-    $chunk: str-slice($svg, $index, $index + $slice - 1);
+    $chunk: string.slice($svg, $index, $index + $slice - 1);
     $chunk: str-replace($chunk, '"', "'");
     $chunk: str-replace($chunk, "<", "%3C");
     $chunk: str-replace($chunk, ">", "%3E");
@@ -178,12 +198,12 @@ $hpad: 0.65em;
 /// @param {String} $replace ('') - New value
 /// @return {String} - Updated string
 @function str-replace($string, $search, $replace: "") {
-  $index: str-index($string, $search);
+  $index: string.index($string, $search);
 
   @if $index {
-    @return str-slice($string, 1, $index - 1) + $replace +
+    @return string.slice($string, 1, $index - 1) + $replace +
       str-replace(
-        str-slice($string, $index + str-length($search)),
+        string.slice($string, $index + string.length($search)),
         $search,
         $replace
       );
@@ -201,7 +221,7 @@ $hpad: 0.65em;
 // rgba(var(--primary-low-rgb), 0.5)
 
 @function hexToRGB($hex) {
-  @return red($hex), green($hex), blue($hex);
+  @return color.red($hex), color.green($hex), color.blue($hex);
 }
 
 @function schemeType() {
@@ -216,8 +236,9 @@ $hpad: 0.65em;
   // public_image_path is added by the stylesheet importer
   // it returns a CDN or subfolder path (if applicable).
   // SCSS will compile (and return the relative path) if public_image_path is missing.
-  @if variable-exists(public_image_path) {
-    @if (str-index("#{$path}", "/plugins") == 1) {
+  /* stylelint-disable-next-line scss/no-global-function-names */
+  @if global-variable-exists(public_image_path) {
+    @if string.index("#{$path}", "/plugins") == 1 {
       $plugin_asset_path: str-replace($public_image_path, "/images", "");
       @return url("#{$plugin_asset_path}#{$path}");
     } @else {
@@ -226,4 +247,65 @@ $hpad: 0.65em;
   } @else {
     @return url("#{$path}");
   }
+}
+
+@mixin mention() {
+  display: inline;
+  font-size: 0.93em;
+  font-weight: normal;
+  color: var(--primary);
+  padding: 0.14em 0.34em 0.19em;
+  background: var(--primary-low);
+  border-radius: 0.6em;
+  text-decoration: none;
+  text-wrap: nowrap;
+
+  &.--bot {
+    background: var(--success-low);
+  }
+
+  &.--wide {
+    background: var(--highlight-low-or-medium);
+  }
+
+  &.--current {
+    background: var(--tertiary-400);
+  }
+}
+
+@mixin nav-active() {
+  color: var(--d-nav-color--active);
+  background: var(--d-nav-bg-color--active);
+
+  .d-icon {
+    color: var(--d-nav-color--active);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: var(--d-nav-underline-height);
+    background: var(--d-nav-color--active);
+  }
+}
+
+@mixin click-counter-badge {
+  content: attr(data-clicks);
+  font-weight: normal;
+  background-color: var(--primary-low);
+  color: var(--primary-medium);
+  position: relative;
+  top: -1px;
+  padding: 0.21em 0.42em;
+  min-width: 0.5em;
+  line-height: var(--line-height-small);
+  font-size: var(--font-down-2);
+  text-align: center;
+  border-radius: 10px;
+  white-space: nowrap;
+  display: inline-block;
+  margin: 0.15em;
 }

@@ -1,77 +1,8 @@
-// Mobile styles for "/user" section
-
-.user-content-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto auto;
-  grid-gap: 16px;
-  .user-primary-navigation {
-    grid-column-start: 1;
-    grid-row-start: 1;
-    grid-column-end: 2;
-    min-width: 120px;
-  }
-  .user-secondary-navigation {
-    grid-column-start: 2;
-    grid-row-start: 1;
-    min-width: 120px;
-  }
-  .user-additional-controls + .user-content,
-  .user-secondary-navigation + .user-content {
-    grid-column-start: 1;
-  }
-  .user-additional-controls {
-    grid-column-start: 1;
-    grid-column-end: 3;
-    grid-row-start: 2;
-  }
-  .user-content,
-  .spinner {
-    grid-row-start: 3;
-    grid-column-start: 1;
-  }
-
-  // specific to messages
-
-  .user-messages {
-    grid-row-start: 2;
-    grid-column-start: 1;
-    grid-column-end: 3;
-
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-
-    + .user-additional-controls {
-      grid-row-start: 2;
-      grid-column-start: 1;
-    }
-  }
-
-  .inboxes-controls {
-    display: flex;
-  }
-
-  .new-private-message {
-    grid-row-start: 1;
-    grid-column-start: 2;
-  }
-
-  .group-notifications-button {
-    margin-left: 8px;
-
-    .select-kit-header {
-      .selected-name .name {
-        display: none;
-      }
-    }
-  }
-}
-
 .user-messages-page {
   .paginated-topics-list {
     margin-top: 0;
   }
+
   .show-mores {
     margin-top: 0.5em;
   }
@@ -83,6 +14,7 @@
   .user-content {
     box-sizing: border-box;
     background-color: var(--secondary);
+
     table {
       width: 100%;
       margin-top: 12px;
@@ -102,14 +34,6 @@
     .details {
       margin-bottom: 12px;
 
-      h1 {
-        line-height: $line-height-small;
-      }
-
-      h2 {
-        line-height: $line-height-medium;
-      }
-
       .user-profile-avatar {
         .avatar-flair {
           right: 2px;
@@ -117,6 +41,7 @@
         display: block;
         float: none;
         margin: 8px auto;
+
         img.avatar {
           float: none;
         }
@@ -128,19 +53,21 @@
 
       .featured-topic {
         text-align: center;
-        font-size: $font-0;
+        font-size: var(--font-0);
       }
 
       .location-and-website {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        font-size: $font-0;
+        font-size: var(--font-0);
+
         .d-icon {
           width: 0.8em;
           height: 0.8em;
           margin-right: 0.25em;
         }
+
         a {
           text-decoration: underline;
         }
@@ -201,58 +128,30 @@
       .user-profile-image {
         height: 200px;
       }
+
       .user-profile-avatar {
         margin-top: -60px;
       }
     }
 
     .controls {
-      order: 3;
       flex: 1 1 25%;
-      margin-left: auto;
-
-      .btn {
-        margin-bottom: 16px;
-      }
 
       ul {
-        margin: 0;
-        display: flex;
-        flex: 1 1 auto;
-        flex-wrap: wrap;
         li,
         > span {
           display: flex;
           flex: 1 1 45%;
-          margin-left: 1em;
+
           button,
           a {
             width: 100%;
           }
+
           .select-kit.dropdown-select-box.user-notifications-dropdown {
             width: 100%;
-            li {
-              flex: 1 1 100%;
-              margin-left: 0;
-            }
           }
         }
-      }
-
-      > ul {
-        margin-left: -1em; // negates left button margin, for alignment
-      }
-
-      .user-profile-controls-outlet {
-        margin: 0 0 0 1em;
-        li {
-          margin: 0;
-        }
-      }
-
-      a {
-        flex: 1 1 auto;
-        min-width: 120px;
       }
     }
   }
@@ -268,6 +167,7 @@
 
 .user-main .collapsed-info.about.has-background {
   background-image: none !important; // todo: make changes to behavior to remove this
+
   .details {
     margin-top: 0;
   }
@@ -275,16 +175,19 @@
 
 .user-main .collapsed-info.about .details {
   display: flex;
-  margin-bottom: 16px;
+  margin-bottom: 0;
+
   .user-profile-avatar {
     margin: 0;
     flex: 0 0 auto;
     align-self: flex-start;
   }
+
   .primary .primary-textual {
     flex: 1 0 80%;
     margin: 0;
   }
+
   .user-profile-names {
     text-align: left;
   }
@@ -298,6 +201,7 @@
   li {
     margin: 0 15px 10px 0;
     padding: 0;
+
     &.linked-stat {
       a {
         padding: 0;
@@ -330,6 +234,7 @@
     overflow: auto;
     width: 100%;
     padding: 5px 0;
+
     input {
       margin-right: 5px;
       flex: 0 0 auto;
@@ -338,6 +243,10 @@
 
   .apps .controls button {
     float: right;
+  }
+
+  #change-email {
+    width: 100%;
   }
 }
 
@@ -360,20 +269,9 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+
     .user-invite-search {
       width: 100%;
-    }
-    .user-invite-buttons {
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      .btn {
-        margin-bottom: 0.5em;
-      }
-      .btn:not(:last-of-type) {
-        margin-right: 0.5em;
-      }
     }
   }
 
@@ -391,7 +289,7 @@
     .label {
       display: block;
       color: var(--primary-medium);
-      font-size: $font-down-1;
+      font-size: var(--font-down-1);
       margin: 0.5em 0 0.15em 0;
     }
 
@@ -406,6 +304,7 @@
       order: 2;
       align-self: center;
       text-align: right;
+      display: flex;
 
       button {
         margin: 0.25em;
@@ -423,13 +322,21 @@
       grid-column-end: -1;
       order: 4;
     }
-
-    td.invite-actions {
-      display: flex;
-    }
   }
 
   .user-invite-none {
     margin-top: 1em;
+  }
+}
+
+.second-factor {
+  .second-factor-item {
+    width: auto;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .details {
+    width: 75%;
   }
 }

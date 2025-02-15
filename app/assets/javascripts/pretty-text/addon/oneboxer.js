@@ -1,4 +1,3 @@
-import domFromString from "discourse-common/lib/dom-from-string";
 import {
   failedCache,
   lookupCache,
@@ -8,7 +7,8 @@ import {
   setFailedCache,
   setLocalCache,
 } from "pretty-text/oneboxer-cache";
-import { later } from "@ember/runloop";
+import domFromString from "discourse/lib/dom-from-string";
+import discourseLater from "discourse/lib/later";
 
 let timeout;
 const loadingQueue = [];
@@ -92,7 +92,7 @@ function loadNext(ajax) {
       }
     )
     .finally(() => {
-      timeout = later(() => loadNext(ajax), timeoutMs);
+      timeout = discourseLater(() => loadNext(ajax), timeoutMs);
       if (removeLoading) {
         elem.classList.remove(LOADING_ONEBOX_CSS_CLASS);
         elem.dataset.oneboxLoaded = "";
@@ -152,6 +152,6 @@ export function load({
   if (synchronous) {
     return loadNext(ajax);
   } else {
-    timeout = timeout || later(() => loadNext(ajax), 150);
+    timeout = timeout || discourseLater(() => loadNext(ajax), 150);
   }
 }

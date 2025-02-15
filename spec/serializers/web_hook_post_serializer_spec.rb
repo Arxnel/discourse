@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 RSpec.describe WebHookPostSerializer do
-  fab!(:admin) { Fabricate(:admin) }
-  fab!(:post) { Fabricate(:post) }
+  fab!(:admin)
+  fab!(:post)
 
   def serialized_for_user(u)
     WebHookPostSerializer.new(post, scope: Guardian.new(u), root: false).as_json
   end
 
-  it 'should only include the required keys' do
+  it "should only include the required keys" do
     expect(serialized_for_user(admin).keys).to contain_exactly(
       :id,
       :name,
@@ -18,6 +18,7 @@ RSpec.describe WebHookPostSerializer do
       :cooked,
       :post_number,
       :post_type,
+      :posts_count,
       :updated_at,
       :reply_count,
       :reply_to_post_number,
@@ -32,6 +33,7 @@ RSpec.describe WebHookPostSerializer do
       :display_username,
       :primary_group_name,
       :flair_name,
+      :flair_group_id,
       :version,
       :user_title,
       :bookmarked,
@@ -49,10 +51,11 @@ RSpec.describe WebHookPostSerializer do
       :reviewable_id,
       :reviewable_score_count,
       :reviewable_score_pending_count,
+      :post_url,
       :topic_posts_count,
       :topic_filtered_posts_count,
       :topic_archetype,
-      :category_slug
+      :category_slug,
     )
   end
 
@@ -60,7 +63,7 @@ RSpec.describe WebHookPostSerializer do
     expect(serialized_for_user(admin)[:category_id]).to eq(post.topic.category_id)
   end
 
-  it 'should only include deleted topic title for staffs' do
+  it "should only include deleted topic title for staffs" do
     topic = post.topic
     PostDestroyer.new(Discourse.system_user, post).destroy
     post.reload

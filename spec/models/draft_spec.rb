@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-describe Draft do
+RSpec.describe Draft do
+  fab!(:user)
+  fab!(:post)
+  let(:topic_key_1) { Draft::NEW_TOPIC + "_0001" }
+  let(:topic_key_2) { Draft::NEW_TOPIC + "_0002" }
+  let(:pm_key_1) { Draft::NEW_PRIVATE_MESSAGE + "_0001" }
+  let(:pm_key_2) { Draft::NEW_PRIVATE_MESSAGE + "_0002" }
 
-  fab!(:user) do
-    Fabricate(:user)
-  end
+  it { is_expected.to have_many(:upload_references).dependent(:delete_all) }
 
-  fab!(:post) do
-    Fabricate(:post)
-  end
-
-  context 'system user' do
+  describe "system user" do
     it "can not set drafts" do
       # fake a sequence
       DraftSequence.create!(user_id: Discourse.system_user.id, draft_key: "abc", sequence: 10)
 
-      seq = Draft.set(Discourse.system_user, "abc", 0, { reply: 'hi' }.to_json)
+      seq = Draft.set(Discourse.system_user, "abc", 0, { reply: "hi" }.to_json)
       expect(seq).to eq(0)
 
       draft = Draft.get(Discourse.system_user, "abc", 0)
@@ -26,14 +26,11 @@ describe Draft do
     end
   end
 
-  context 'backup_drafts_to_pm_length' do
+  describe "backup_drafts_to_pm_length" do
     it "correctly backs up drafts to a personal message" do
       SiteSetting.backup_drafts_to_pm_length = 1
 
-      draft = {
-        reply: "this is a reply",
-        random_key: "random"
-      }
+      draft = { reply: "this is a reply", random_key: "random" }
 
       seq = Draft.set(user, "xyz", 0, draft.to_json)
       draft["reply"] = "test" * 100
@@ -68,7 +65,7 @@ describe Draft do
 
   it "uses the user id and key correctly" do
     Draft.set(user, "test", 0, "data")
-    expect(Draft.get(Fabricate.build(:coding_horror), "test", 0)).to eq nil
+    expect(Draft.get(Fabricate(:user), "test", 0)).to eq nil
   end
 
   it "should overwrite draft data correctly" do
@@ -91,7 +88,6 @@ describe Draft do
   end
 
   it "should cross check with DraftSequence table" do
-
     Draft.set(user, "test", 0, "old")
     expect(Draft.get(user, "test", 0)).to eq "old"
 
@@ -99,24 +95,20 @@ describe Draft do
     seq = DraftSequence.next!(user, "test")
     expect(seq).to eq(2)
 
-    expect do
-      Draft.set(user, "test", seq - 1, "error")
-    end.to raise_error(Draft::OutOfSequence)
+    expect do Draft.set(user, "test", seq - 1, "error") end.to raise_error(Draft::OutOfSequence)
 
-    expect do
-      Draft.set(user, "test", seq + 1, "error")
-    end.to raise_error(Draft::OutOfSequence)
+    expect do Draft.set(user, "test", seq + 1, "error") end.to raise_error(Draft::OutOfSequence)
 
     Draft.set(user, "test", seq, "data")
     expect(Draft.get(user, "test", seq)).to eq "data"
 
-    expect do
-      expect(Draft.get(user, "test", seq - 1)).to eq "data"
-    end.to raise_error(Draft::OutOfSequence)
+    expect do expect(Draft.get(user, "test", seq - 1)).to eq "data" end.to raise_error(
+      Draft::OutOfSequence,
+    )
 
-    expect do
-      expect(Draft.get(user, "test", seq + 1)).to eq "data"
-    end.to raise_error(Draft::OutOfSequence)
+    expect do expect(Draft.get(user, "test", seq + 1)).to eq "data" end.to raise_error(
+      Draft::OutOfSequence,
+    )
   end
 
   it "should disregard old draft if sequence decreases" do
@@ -124,13 +116,9 @@ describe Draft do
     DraftSequence.next!(user, "test")
     Draft.set(user, "test", 1, "hello")
 
-    expect do
-      Draft.set(user, "test", 0, "foo")
-    end.to raise_error(Draft::OutOfSequence)
+    expect do Draft.set(user, "test", 0, "foo") end.to raise_error(Draft::OutOfSequence)
 
-    expect do
-      Draft.get(user, "test", 0)
-    end.to raise_error(Draft::OutOfSequence)
+    expect do Draft.get(user, "test", 0) end.to raise_error(Draft::OutOfSequence)
 
     expect(Draft.get(user, "test", 1)).to eq "hello"
   end
@@ -144,25 +132,30 @@ describe Draft do
     expect(seq).to eq(2)
   end
 
-  it 'can cleanup old drafts' do
-    key = Draft::NEW_TOPIC
+  it "can cleanup old drafts" do
+    Draft.set(user, topic_key_1, 0, "draft")
 
-    Draft.set(user, key, 0, 'draft')
     Draft.cleanup!
     expect(Draft.count).to eq 1
     expect(user.user_stat.draft_count).to eq(1)
 
-    seq = DraftSequence.next!(user, key)
+    seq = DraftSequence.next!(user, topic_key_1)
 
-    Draft.set(user, key, seq, 'draft')
-    DraftSequence.update_all('sequence = sequence + 1')
+    Draft.set(user, topic_key_1, seq, "updated draft")
+    DraftSequence.update_all("sequence = sequence + 1")
+
+    draft = Draft.first
+    draft.upload_references << UploadReference.create!(target: draft, upload: Fabricate(:upload))
+
+    expect(UploadReference.count).to eq(1)
 
     Draft.cleanup!
 
     expect(Draft.count).to eq 0
     expect(user.reload.user_stat.draft_count).to eq(0)
+    expect(UploadReference.count).to eq(0)
 
-    Draft.set(Fabricate(:user), Draft::NEW_TOPIC, 0, 'draft')
+    Draft.set(Fabricate(:user), topic_key_1, 0, "draft")
 
     Draft.cleanup!
 
@@ -176,31 +169,29 @@ describe Draft do
     expect(Draft.count).to eq 0
   end
 
-  it 'updates draft count when a draft is created or destroyed' do
-    Draft.set(Fabricate(:user), Draft::NEW_TOPIC, 0, "data")
+  it "updates draft count when a draft is created or destroyed" do
+    Draft.set(Fabricate(:user), topic_key_1, 0, "data")
 
-    messages = MessageBus.track_publish("/user") do
-      Draft.set(user, Draft::NEW_TOPIC, 0, "data")
-    end
+    messages =
+      MessageBus.track_publish("/user-drafts/#{user.id}") do
+        Draft.set(user, topic_key_1, 0, "data")
+      end
 
     expect(messages.first.data[:draft_count]).to eq(1)
-    expect(messages.first.data[:has_topic_draft]).to eq(true)
+    expect(messages.first.user_ids).to contain_exactly(user.id)
 
-    messages = MessageBus.track_publish("/user") do
-      Draft.where(user: user).destroy_all
-    end
+    messages =
+      MessageBus.track_publish("/user-drafts/#{user.id}") { Draft.where(user: user).destroy_all }
 
     expect(messages.first.data[:draft_count]).to eq(0)
-    expect(messages.first.data[:has_topic_draft]).to eq(false)
+    expect(messages.first.user_ids).to contain_exactly(user.id)
   end
 
-  describe '#stream' do
+  describe "#stream" do
     fab!(:public_post) { Fabricate(:post) }
     let(:public_topic) { public_post.topic }
 
-    let(:stream) do
-      Draft.stream(user: user)
-    end
+    let(:stream) { Draft.stream(user: user) }
 
     it "should include the correct number of drafts in the stream" do
       Draft.set(user, "test", 0, '{"reply":"hey.","action":"createTopic","title":"Hey"}')
@@ -219,69 +210,104 @@ describe Draft do
       draft_row = stream.first
       expect(draft_row.user.username).to eq(user.username)
     end
-
   end
 
-  context 'key expiry' do
-    it 'nukes new topic draft after a topic is created' do
-      Draft.set(user, Draft::NEW_TOPIC, 0, 'my draft')
-      _t = Fabricate(:topic, user: user, advance_draft: true)
-      s = DraftSequence.current(user, Draft::NEW_TOPIC)
-      expect(Draft.get(user, Draft::NEW_TOPIC, s)).to eq nil
-      expect(Draft.count).to eq 0
+  describe "multiple drafts" do
+    it "allows new topic draft when a topic draft exists" do
+      Draft.set(user, topic_key_1, 0, "topic draft 1")
+      Draft.set(user, topic_key_2, 0, "topic draft 2")
+      seq_1 = DraftSequence.current(user, topic_key_1)
+      seq_2 = DraftSequence.current(user, topic_key_2)
+
+      expect(Draft.get(user, topic_key_1, seq_1)).to eq "topic draft 1"
+      expect(Draft.get(user, topic_key_2, seq_2)).to eq "topic draft 2"
+      expect(Draft.count).to eq 2
     end
 
-    it 'nukes new pm draft after a pm is created' do
-      Draft.set(user, Draft::NEW_PRIVATE_MESSAGE, 0, 'my draft')
-      t = Fabricate(:topic, user: user, archetype: Archetype.private_message, category_id: nil, advance_draft: true)
-      s = DraftSequence.current(t.user, Draft::NEW_PRIVATE_MESSAGE)
-      expect(Draft.get(user, Draft::NEW_PRIVATE_MESSAGE, s)).to eq nil
+    it "allows new pm draft when a pm draft exists" do
+      Draft.set(user, pm_key_1, 0, "pm draft 1")
+      Draft.set(user, pm_key_2, 0, "pm draft 2")
+      seq_1 = DraftSequence.current(user, pm_key_1)
+      seq_2 = DraftSequence.current(user, pm_key_2)
+
+      expect(Draft.get(user, pm_key_1, seq_1)).to eq "pm draft 1"
+      expect(Draft.get(user, pm_key_2, seq_2)).to eq "pm draft 2"
+      expect(Draft.count).to eq 2
     end
 
-    it 'does not nuke new topic draft after a pm is created' do
-      Draft.set(user, Draft::NEW_TOPIC, 0, 'my draft')
-      t = Fabricate(:topic, user: user, archetype: Archetype.private_message, category_id: nil)
-      s = DraftSequence.current(t.user, Draft::NEW_TOPIC)
-      expect(Draft.get(user, Draft::NEW_TOPIC, s)).to eq 'my draft'
+    it "allows both topic drafts and PM drafts" do
+      Draft.set(user, topic_key_1, 0, "my topic draft 1")
+      Draft.set(user, topic_key_2, 0, "my topic draft 2")
+      Draft.set(user, pm_key_1, 0, "my pm draft 1")
+      Draft.set(user, pm_key_2, 0, "my pm draft 2")
+
+      new_topic =
+        Fabricate(:topic, user: user, archetype: Archetype.private_message, category_id: nil)
+      new_pm = Fabricate(:private_message_topic, user: user)
+
+      topic_seq_1 = DraftSequence.current(new_topic.user, topic_key_1)
+      topic_seq_2 = DraftSequence.current(new_topic.user, topic_key_2)
+      pm_seq_1 = DraftSequence.current(new_pm.user, pm_key_1)
+      pm_seq_2 = DraftSequence.current(new_pm.user, pm_key_2)
+
+      expect(Draft.get(user, topic_key_1, topic_seq_1)).to eq "my topic draft 1"
+      expect(Draft.get(user, topic_key_2, topic_seq_2)).to eq "my topic draft 2"
+      expect(Draft.get(user, pm_key_1, pm_seq_1)).to eq "my pm draft 1"
+      expect(Draft.get(user, pm_key_2, pm_seq_2)).to eq "my pm draft 2"
+      expect(Draft.count).to eq 4
     end
 
-    it 'nukes the post draft when a post is created' do
+    it "nukes the post draft when a post is created" do
       topic = Fabricate(:topic)
 
-      Draft.set(user, topic.draft_key, 0, 'hello')
+      Draft.set(user, topic.draft_key, 0, "hello")
 
-      p = PostCreator.new(user, raw: Fabricate.build(:post).raw, topic_id: topic.id, advance_draft: true).create
+      p =
+        PostCreator.new(
+          user,
+          raw: Fabricate.build(:post).raw,
+          topic_id: topic.id,
+          advance_draft: true,
+        ).create
 
-      expect(Draft.get(p.user, p.topic.draft_key, DraftSequence.current(p.user, p.topic.draft_key))).to eq nil
+      expect(
+        Draft.get(p.user, p.topic.draft_key, DraftSequence.current(p.user, p.topic.draft_key)),
+      ).to eq nil
     end
 
-    it 'nukes the post draft when a post is revised' do
-      Draft.set(post.user, post.topic.draft_key, 0, 'hello')
-      post.revise(post.user, raw: 'another test')
+    it "nukes the post draft when a post is revised" do
+      Draft.set(post.user, post.topic.draft_key, 0, "hello")
+      post.revise(post.user, raw: "another test")
       s = DraftSequence.current(post.user, post.topic.draft_key)
       expect(Draft.get(post.user, post.topic.draft_key, s)).to eq nil
     end
 
-    it 'increases revision each time you set' do
-      Draft.set(user, 'new_topic', 0, 'hello')
-      Draft.set(user, 'new_topic', 0, 'goodbye')
+    it "increases revision each time you set" do
+      Draft.set(user, topic_key_1, 0, "hello")
+      Draft.set(user, topic_key_1, 0, "goodbye")
 
-      expect(Draft.find_by(user_id: user.id, draft_key: 'new_topic').revisions).to eq(2)
+      expect(Draft.count).to eq 1
+      expect(Draft.find_by(user_id: user.id, draft_key: topic_key_1).revisions).to eq(2)
     end
 
-    it 'handles owner switching gracefully' do
-      draft_seq = Draft.set(user, 'new_topic', 0, 'hello', _owner = 'ABCDEF')
+    it "handles owner switching gracefully" do
+      draft_seq = Draft.set(user, "new_topic", 0, "hello", _owner = "ABCDEF")
       expect(draft_seq).to eq(0)
 
-      draft_seq = Draft.set(user, 'new_topic', 0, 'hello world', _owner = 'HIJKL')
+      draft_seq = Draft.set(user, "new_topic", 0, "hello world", _owner = "HIJKL")
       expect(draft_seq).to eq(1)
 
-      draft_seq = Draft.set(user, 'new_topic', 1, 'hello world', _owner = 'HIJKL')
+      draft_seq = Draft.set(user, "new_topic", 1, "hello world", _owner = "HIJKL")
       expect(draft_seq).to eq(2)
     end
 
-    it 'can correctly preload drafts' do
-      Draft.set(user, "#{Draft::EXISTING_TOPIC}#{post.topic_id}", 0, { raw: 'hello', postId: post.id }.to_json)
+    it "can correctly preload drafts" do
+      Draft.set(
+        user,
+        "#{Draft::EXISTING_TOPIC}#{post.topic_id}",
+        0,
+        { raw: "hello", postId: post.id }.to_json,
+      )
 
       drafts = Draft.where(user_id: user.id).to_a
 
@@ -293,6 +319,7 @@ describe Draft do
       expect(drafts[0].post_preloaded?).to eq(true)
       expect(drafts[0].post.id).to eq(post.id)
     end
-
   end
+
+  it { is_expected.to validate_length_of(:draft_key).is_at_most(40) }
 end

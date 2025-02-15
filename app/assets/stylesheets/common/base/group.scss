@@ -2,15 +2,43 @@
 // To style group content differently, use the existing classes with a .group parent class.
 // For example: .group .user-secondary-navigation
 
-span.mention-group {
-  color: var(--primary);
+@use "sass:math";
+
+.container.group {
+  background: var(--d-content-background);
 }
 
 .group-details-container {
   background: var(--primary-very-low);
-  padding: 20px;
-  margin-bottom: 15px;
+  padding: 0.8em;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+
+.group-bio {
+  max-width: 80ch;
+
+  p:first-child {
+    margin-top: 0;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.group-info-details {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 100%;
+}
+
+.group-info-mention-name {
+  margin-bottom: 0.5em;
 }
 
 .group-delete-tooltip {
@@ -27,15 +55,28 @@ span.mention-group {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
+  gap: 0.5em 0;
+  margin-bottom: 1em;
 
-  input + .group-members-manage {
-    margin-left: auto;
+  .bulk-select + input {
+    margin-left: 0.5em;
   }
 
-  .group-username-filter {
-    margin: 0 0 5px 0;
-    vertical-align: middle;
+  input {
+    margin: 0 auto 0 0;
   }
+
+  .bulk-select-buttons-wrap {
+    margin-right: 0.5em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+}
+
+.group-members-manage {
+  display: flex;
+  gap: 0.5em;
 }
 
 .group-info {
@@ -48,18 +89,18 @@ span.mention-group {
   }
 
   .group-info-name {
-    font-size: $font-up-3;
+    font-size: var(--font-up-3);
     font-weight: bold;
     color: var(--primary);
   }
 
   .group-info-full-name {
-    font-size: $font-up-2;
+    font-size: var(--font-up-2);
     color: var(--primary-high-or-secondary-low);
   }
 
   $size: 50px;
-  $icon-size: $size / 1.8;
+  $icon-size: math.div($size, 1.8);
 
   .avatar-flair-image {
     width: $size;
@@ -84,9 +125,8 @@ span.mention-group {
   .group-details-button {
     display: flex;
     flex-wrap: wrap;
-    button:not(:last-child) {
-      margin-right: 0.5em;
-    }
+    justify-content: end;
+    gap: 0.5em;
   }
 }
 
@@ -120,58 +160,67 @@ table.group-manage-logs {
   }
 }
 
-table.group-members {
-  width: 100%;
-  table-layout: fixed;
+.group-members {
+  grid-template-columns: 3fr repeat(3, minmax(min-content, 1fr));
 
-  th {
-    text-align: center;
+  &--can-manage {
+    grid-template-columns: 3fr repeat(4, minmax(min-content, 1fr)) 3em;
+    @container (max-width: 47em) {
+      // positioning the member settings button within the same cell
+      // and avoiding overlap with padding-right on user-info
+      .group-member,
+      .member-settings {
+        grid-row-start: 1;
+        grid-column-start: 1;
+        grid-column-end: -1;
+      }
 
-    &.bulk-select {
-      height: 30px;
-      width: 30px;
-    }
+      .member-settings {
+        margin-left: auto;
+      }
 
-    &.bulk-select-buttons {
-      text-align: left;
-      width: 20%;
-      .bulk-select-buttons-wrap {
-        display: inline-flex;
-        .btn {
-          margin-right: 0.5em;
-        }
+      .user-info {
+        padding-right: 3.5em;
       }
     }
+  }
 
-    &.username {
-      text-align: left;
-      width: 30%;
-    }
+  &.group-members__requests {
+    grid-template-columns: 3fr repeat(3, minmax(max-content, 1fr));
+  }
 
-    &.bulk-select-buttons + .username {
-      width: 10%;
-    }
+  .directory-table__value {
+    font-size: var(--font-0);
+    color: var(--primary);
+  }
 
-    &.group-members-actions {
-      width: 5%;
+  .group-accept-deny-buttons {
+    gap: 0.5em;
+  }
+
+  [class*="group-request-reason__"] {
+    justify-content: start;
+  }
+
+  .group-request-reason__content {
+    .directory-table__value {
+      white-space: normal;
+      max-width: 30em;
     }
   }
 
-  td {
-    color: var(--primary-medium);
-    padding: 0.8em 0;
-    text-align: center;
-
-    &.avatar {
-      text-align: left;
+  @container (max-width: 47em) {
+    .directory-table__cell {
+      grid-column-start: 1;
+      grid-column-end: -1;
     }
-  }
 
-  .user-info {
-    display: block;
+    .group-accept-deny-buttons {
+      justify-content: start;
+    }
 
-    .avatar-flair {
-      color: var(--primary);
+    .directory-table__cell.group-owner {
+      order: 2;
     }
   }
 }
@@ -248,26 +297,41 @@ table.group-category-permissions {
   }
 }
 
-.group-smtp-email-settings,
-.group-imap-email-settings {
-  .groups-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    margin-bottom: 0;
+.group-smtp-prefill-options {
+  ul {
+    display: inline;
+    margin: 0;
 
-    &.groups-form-imap {
-      grid-template-columns: 1fr 1fr 2fr;
+    li {
+      display: inline-block;
+
+      &::before {
+        content: "|";
+      }
+
+      &:first-child::before {
+        content: "";
+      }
     }
   }
+}
 
+.group-smtp-email-settings,
+.group-imap-email-settings {
   background-color: var(--primary-very-low);
   padding: 1em;
   margin: 1em 0;
   border: 1px solid var(--primary-low);
 
-  .group-imap-mailboxes {
-    .combo-box {
-      width: 50%;
+  .groups-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13em, 1fr));
+    margin-bottom: 0;
+    gap: 0 1em;
+
+    details,
+    .ember-text-field {
+      width: 100%;
     }
   }
 }
@@ -277,6 +341,6 @@ table.group-category-permissions {
 }
 
 .groups-form .control-group.buttons {
-  margin-bottom: 0px;
+  margin-bottom: 0;
   padding: 1em 0;
 }
